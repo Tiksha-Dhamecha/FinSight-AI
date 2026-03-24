@@ -5,7 +5,11 @@
   var TOKEN_KEY = "finsight_auth_token";
 
   function origin() {
-    return window.FINSIGHT_API_ORIGIN.replace(/\/$/, "");
+    var o = window.FINSIGHT_API_ORIGIN;
+    if (typeof o !== "string" || !o) {
+      o = "http://127.0.0.1:8000";
+    }
+    return String(o).replace(/\/$/, "");
   }
 
   function authHeader() {

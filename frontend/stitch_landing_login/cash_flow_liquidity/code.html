@@ -89,6 +89,7 @@
 <script src="../js/config.js"></script>
 <script src="../js/auth.js"></script>
 <script src="../js/auth-guard.js"></script>
+<script src="../js/inr-format.js"></script>
 <!-- SideNavBar Shell -->
 <aside class="fixed left-0 top-0 h-full flex flex-col h-screen w-64 border-r-0 bg-slate-50 dark:bg-slate-900 font-manrope antialiased">
 <div class="px-6 py-8">
@@ -159,26 +160,40 @@
 </header>
 <!-- Main Canvas -->
 <main class="ml-64 p-8 space-y-10 max-w-7xl">
+<div class="flex flex-wrap items-center gap-2 justify-end mb-2" id="cashflow-filters">
+<button type="button" id="cf-filter-last_6_months" class="px-4 py-2 rounded-lg text-sm font-semibold bg-surface-container-lowest text-primary shadow-sm">Last 6 Months</button>
+<button type="button" id="cf-filter-ytd" class="px-4 py-2 rounded-lg text-sm font-semibold text-slate-500 hover:text-primary">YTD</button>
+<button type="button" id="cf-filter-custom_toggle" class="px-4 py-2 rounded-lg text-sm font-semibold text-slate-500 hover:text-primary">Custom</button>
+<span id="cf-custom-range" class="hidden flex flex-wrap items-center gap-2">
+<input type="date" id="cf-custom-start" class="text-xs rounded border border-outline-variant/30 px-2 py-1 bg-surface-container-lowest"/>
+<span class="text-xs text-outline">to</span>
+<input type="date" id="cf-custom-end" class="text-xs rounded border border-outline-variant/30 px-2 py-1 bg-surface-container-lowest"/>
+<button type="button" id="cf-filter-custom_apply" class="px-3 py-1 rounded text-xs font-bold bg-primary text-on-primary">Apply</button>
+</span>
+</div>
 <!-- Hero Section: Editorial Headline & High-Level Metric -->
 <section class="flex flex-col md:flex-row justify-between items-end gap-6 border-b border-outline-variant/10 pb-10">
 <div>
 <h1 class="text-[3.5rem] leading-none font-extrabold font-headline tracking-tighter text-primary mb-4">Cash Movement</h1>
-<p class="text-on-surface-variant max-w-xl font-body leading-relaxed">
-                    Analyzing the narrative of your liquidity. This month reflects a <span class="text-secondary font-semibold">positive momentum</span> with optimized working capital cycles.
+<p id="cf-hero-narrative" class="text-on-surface-variant max-w-xl font-body leading-relaxed">
+                    Loading liquidity narrative from your transactions…
                 </p>
+<p id="cf-hero-range" class="text-xs text-outline mt-3 font-medium"></p>
 </div>
 <div class="flex items-center gap-8">
 <div class="text-right">
-<p class="text-label-sm uppercase tracking-[0.2em] text-outline font-bold mb-1">Net Movement</p>
-<p class="text-4xl font-headline font-bold text-secondary">+$30,000</p>
+<p class="text-label-sm uppercase tracking-[0.2em] text-outline font-bold mb-1">Net Movement (period)</p>
+<p id="cf-net-movement" class="text-4xl font-headline font-bold text-secondary">—</p>
+<p id="cf-net-vs-prior" class="text-xs text-on-surface-variant mt-1 max-w-[14rem]"></p>
 </div>
 <div class="h-16 w-[1px] bg-outline-variant/20 hidden md:block"></div>
 <div class="text-right">
-<p class="text-label-sm uppercase tracking-[0.2em] text-outline font-bold mb-1">Status</p>
+<p class="text-label-sm uppercase tracking-[0.2em] text-outline font-bold mb-1">Liquidity status</p>
 <div class="flex items-center gap-2 justify-end">
-<span class="w-3 h-3 bg-secondary rounded-full"></span>
-<span class="font-bold text-primary">Healthy</span>
+<span id="cf-status-dot" class="w-3 h-3 bg-outline rounded-full"></span>
+<span id="cf-status-text" class="font-bold text-primary">—</span>
 </div>
+<p id="cf-position-proxy" class="text-[10px] text-outline mt-2 max-w-[12rem] text-right">Overall position (ledger): —</p>
 </div>
 </div>
 </section>
@@ -189,7 +204,7 @@
 <div class="flex justify-between items-start mb-10">
 <div>
 <h3 class="text-headline-sm font-bold text-primary mb-1">Inflow vs Outflow</h3>
-<p class="text-body-md text-on-surface-variant">Trailing 6-month liquidity narrative</p>
+<p id="cf-chart-subtitle" class="text-body-md text-on-surface-variant">Liquidity by month for the selected period</p>
 </div>
 <div class="flex gap-4">
 <div class="flex items-center gap-2">
@@ -202,52 +217,31 @@
 </div>
 </div>
 </div>
-<!-- Chart Placeholder -->
-<div class="relative h-[320px] w-full flex items-end justify-between gap-1 px-2 mb-4">
-<!-- Grid Lines -->
-<div class="absolute inset-0 flex flex-col justify-between pointer-events-none">
+<!-- Chart (populated from API) -->
+<div class="relative h-[320px] w-full px-2 mb-4" id="cf-chart-wrap">
+<div class="absolute inset-0 flex flex-col justify-between pointer-events-none pt-2 pb-8">
 <div class="border-b border-outline-variant/10 w-full h-px"></div>
 <div class="border-b border-outline-variant/10 w-full h-px"></div>
 <div class="border-b border-outline-variant/10 w-full h-px"></div>
 <div class="border-b border-outline-variant/10 w-full h-px"></div>
 </div>
-<!-- SVG Area Chart -->
-<svg class="absolute inset-0 h-full w-full" preserveaspectratio="none" viewbox="0 0 800 320">
-<!-- Outflow Area (Tonal Navy) -->
-<path d="M0,280 Q100,290 200,240 T400,260 T600,270 T800,250 L800,320 L0,320 Z" fill="rgba(4,22,39,0.05)"></path>
-<!-- Inflow Area (Secondary Teal Gradient) -->
-<defs>
-<lineargradient id="chartGradient" x1="0%" x2="0%" y1="0%" y2="100%">
-<stop offset="0%" style="stop-color:#006d3d;stop-opacity:0.15"></stop>
-<stop offset="100%" style="stop-color:#006d3d;stop-opacity:0"></stop>
-</lineargradient>
-</defs>
-<path d="M0,220 Q100,180 200,150 T400,120 T600,80 T800,60 L800,320 L0,320 Z" fill="url(#chartGradient)"></path>
-<!-- Main Stroke -->
-<path d="M0,220 Q100,180 200,150 T400,120 T600,80 T800,60" fill="none" stroke="#006d3d" stroke-linecap="round" stroke-width="3"></path>
-</svg>
-<span class="text-[10px] text-outline font-bold mt-2">JAN</span>
-<span class="text-[10px] text-outline font-bold mt-2">FEB</span>
-<span class="text-[10px] text-outline font-bold mt-2">MAR</span>
-<span class="text-[10px] text-outline font-bold mt-2">APR</span>
-<span class="text-[10px] text-outline font-bold mt-2">MAY</span>
-<span class="text-[10px] text-outline font-bold mt-2">JUN</span>
+<div id="cf-chart-container" class="relative h-full w-full flex items-end justify-center gap-1 pt-4 pb-8"></div>
 </div>
 </div>
 <!-- Runway Card (Glassmorphism Warning) -->
 <div class="md:col-span-4 bg-primary rounded-xl p-7 flex flex-col justify-between text-on-primary relative overflow-hidden shadow-2xl shadow-primary/20">
 <div class="relative z-10">
 <p class="text-label-sm uppercase tracking-[0.2em] opacity-60 font-bold mb-8">Liquidity Runway</p>
-<h2 class="text-5xl font-headline font-extrabold mb-2">14 Months</h2>
-<p class="text-body-md opacity-80 leading-relaxed">Stable operational window based on current average burn rates.</p>
+<h2 id="cf-runway-months" class="text-5xl font-headline font-extrabold mb-2">—</h2>
+<p id="cf-runway-copy" class="text-body-md opacity-80 leading-relaxed">Runway uses cumulative ledger net movement vs average monthly outflow in this period.</p>
 </div>
 <div class="mt-8 pt-8 border-t border-white/10 relative z-10">
 <div class="flex justify-between items-center mb-3">
 <span class="text-sm font-medium">Risk Exposure</span>
-<span class="text-tertiary-fixed font-bold text-sm">Low Risk</span>
+<span id="cf-risk-label" class="text-tertiary-fixed font-bold text-sm">—</span>
 </div>
 <div class="h-2 w-full bg-white/10 rounded-full overflow-hidden">
-<div class="h-full bg-secondary w-3/4 rounded-full"></div>
+<div id="cf-risk-bar" class="h-full bg-secondary rounded-full transition-all duration-700" style="width: 50%"></div>
 </div>
 </div>
 <!-- Subtle Background Texture -->
@@ -258,16 +252,16 @@
 <div>
 <div class="flex justify-between items-start mb-6">
 <span class="material-symbols-outlined text-secondary text-3xl" data-icon="call_received">call_received</span>
-<span class="bg-secondary-container text-on-secondary-container text-[10px] font-bold px-2 py-1 rounded">ON TIME</span>
+<span id="cf-ar-badge" class="bg-secondary-container text-on-secondary-container text-[10px] font-bold px-2 py-1 rounded">—</span>
 </div>
 <h4 class="text-label-sm uppercase tracking-wider text-outline font-bold mb-1">Accounts Receivable</h4>
-<p class="text-3xl font-headline font-bold text-primary">$85,000</p>
+<p id="cf-ar-amount" class="text-3xl font-headline font-bold text-primary">—</p>
 </div>
 <div class="mt-8 flex items-center justify-between">
-<p class="text-xs text-on-surface-variant">8 Active Invoices</p>
-<button class="text-primary text-xs font-bold flex items-center gap-1 hover:underline">
-                        View List <span class="material-symbols-outlined text-xs">arrow_forward</span>
-</button>
+<p id="cf-ar-count" class="text-xs text-on-surface-variant">Pending revenue (PENDING status)</p>
+<a href="../data_entry_import/code.html" class="text-primary text-xs font-bold flex items-center gap-1 hover:underline">
+                        View ledger <span class="material-symbols-outlined text-xs">arrow_forward</span>
+</a>
 </div>
 </div>
 <!-- Working Capital Widgets: Payables -->
@@ -275,56 +269,27 @@
 <div>
 <div class="flex justify-between items-start mb-6">
 <span class="material-symbols-outlined text-tertiary-fixed-dim text-3xl" data-icon="call_made">call_made</span>
-<span class="bg-tertiary-fixed text-on-tertiary-fixed text-[10px] font-bold px-2 py-1 rounded">7 DAYS LEFT</span>
+<span id="cf-ap-badge" class="bg-tertiary-fixed text-on-tertiary-fixed text-[10px] font-bold px-2 py-1 rounded">—</span>
 </div>
 <h4 class="text-label-sm uppercase tracking-wider text-outline font-bold mb-1">Accounts Payable</h4>
-<p class="text-3xl font-headline font-bold text-primary">$42,000</p>
+<p id="cf-ap-amount" class="text-3xl font-headline font-bold text-primary">—</p>
 </div>
 <div class="mt-8 flex items-center justify-between">
-<p class="text-xs text-on-surface-variant">12 Pending Payments</p>
-<button class="text-primary text-xs font-bold flex items-center gap-1 hover:underline">
-                        Approve All <span class="material-symbols-outlined text-xs">check_circle</span>
-</button>
+<p id="cf-ap-count" class="text-xs text-on-surface-variant">Pending expenses (PENDING status)</p>
+<a href="../data_entry_import/code.html" class="text-primary text-xs font-bold flex items-center gap-1 hover:underline">
+                        View ledger <span class="material-symbols-outlined text-xs">check_circle</span>
+</a>
 </div>
 </div>
 <!-- Transaction Spotlight (Asymmetric) -->
 <div class="md:col-span-4 bg-surface-container-lowest rounded-xl p-7 flex flex-col shadow-sm">
 <h3 class="text-headline-sm font-bold text-primary mb-6">Liquidity Events</h3>
-<div class="space-y-6">
-<div class="flex gap-4 items-start">
-<div class="w-10 h-10 rounded-lg bg-surface-container-high flex items-center justify-center shrink-0">
-<span class="material-symbols-outlined text-primary text-sm">bolt</span>
+<div id="cf-events-list" class="space-y-6">
+<p class="text-sm text-on-surface-variant">Loading events from your transactions…</p>
 </div>
-<div class="flex-1">
-<p class="text-sm font-bold text-primary">AWS Subscription</p>
-<p class="text-xs text-outline font-medium">Recurring • 2h ago</p>
-</div>
-<p class="text-sm font-bold text-error">-$1,240</p>
-</div>
-<div class="flex gap-4 items-start">
-<div class="w-10 h-10 rounded-lg bg-surface-container-high flex items-center justify-center shrink-0">
-<span class="material-symbols-outlined text-primary text-sm">handshake</span>
-</div>
-<div class="flex-1">
-<p class="text-sm font-bold text-primary">Northstar Corp</p>
-<p class="text-xs text-outline font-medium">Invoice Paid • 5h ago</p>
-</div>
-<p class="text-sm font-bold text-secondary">+$14,500</p>
-</div>
-<div class="flex gap-4 items-start">
-<div class="w-10 h-10 rounded-lg bg-surface-container-high flex items-center justify-center shrink-0">
-<span class="material-symbols-outlined text-primary text-sm">person</span>
-</div>
-<div class="flex-1">
-<p class="text-sm font-bold text-primary">Payroll Batch</p>
-<p class="text-xs text-outline font-medium">Scheduled • Tomorrow</p>
-</div>
-<p class="text-sm font-bold text-primary">-$48,000</p>
-</div>
-</div>
-<button class="mt-8 w-full py-3 bg-surface-container-low text-primary text-sm font-bold rounded-lg hover:bg-surface-container-high transition-colors">
-                    Download Journal
-                </button>
+<a href="../data_entry_import/code.html" class="mt-8 w-full py-3 bg-surface-container-low text-primary text-sm font-bold rounded-lg hover:bg-surface-container-high transition-colors text-center block">
+                    Open transactions
+                </a>
 </div>
 </section>
 <!-- Dynamic Insights Panel -->
@@ -334,15 +299,17 @@
 </div>
 <div class="flex-1">
 <h4 class="text-xl font-bold font-headline text-primary mb-2">Liquidity Optimization Opportunity</h4>
-<p class="text-on-surface-variant font-body leading-relaxed max-w-2xl">
-                    By adjusting your <span class="font-bold text-primary">Accounts Payable</span> schedule by just 4 days, you can increase your month-end liquidity buffer by <span class="text-secondary font-bold">12%</span> without incurring penalties.
+<p id="cf-opt-summary" class="text-on-surface-variant font-body leading-relaxed max-w-2xl">
+                    Analyzing your ledger for actionable liquidity improvements…
                 </p>
+<ul id="cf-opt-strategies" class="mt-4 space-y-2 text-sm text-on-surface-variant max-w-2xl list-disc pl-5 hidden"></ul>
 </div>
-<button class="bg-primary text-on-primary px-8 py-3 rounded-lg font-bold text-sm hover:scale-105 transition-transform">
-                Apply Strategy
-            </button>
+<a href="../data_entry_import/code.html" class="bg-primary text-on-primary px-8 py-3 rounded-lg font-bold text-sm hover:scale-105 transition-transform inline-block text-center">
+                Review transactions
+            </a>
 </section>
 </main>
 <!-- Floating Action Button: Suppressed for focus as per mandate, but added logic check: only visible on Home/Dashboard. 
          Since this is a dedicated 'Cash Flow' screen, we exclude global FAB. -->
+<script src="../js/cash-flow-page.js"></script>
 </body></html>

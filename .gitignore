@@ -27,11 +27,15 @@ pip-delete-this-directory.txt
 .coverage
 .coverage.*
 htmlcov/
+coverage.xml
+*.cover
 .pytest_cache/
+.pytest/
 .mypy_cache/
 .dmypy.json
 dmypy.json
 .ruff_cache/
+.hypothesis/
 
 # Virtual environments
 .venv/
@@ -42,12 +46,16 @@ env/
 # --- Django ---
 *.log
 local_settings.py
+# SQLite (default DB + WAL mode sidecar files)
 db.sqlite3
 db.sqlite3-journal
-/backend/db.sqlite3
-/backend/media/
-/backend/staticfiles/
-/backend/static/
+*.sqlite3
+*.sqlite3-wal
+*.sqlite3-shm
+backend/db.sqlite3
+backend/media/
+backend/staticfiles/
+backend/static/
 
 # Secrets & local env (never commit)
 .env
@@ -67,6 +75,12 @@ dist/
 
 # --- IDE & editors ---
 .idea/
+# VS Code: ignore untracked local files; shared config can still be committed via exceptions
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+!.vscode/launch.json
+!.vscode/tasks.json
 *.swp
 *.swo
 *~
@@ -75,3 +89,8 @@ dist/
 .DS_Store
 Thumbs.db
 Desktop.ini
+*.stackdump
+
+# Local scratch / merge artifacts
+*.orig
+*.bak

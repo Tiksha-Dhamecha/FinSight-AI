@@ -64,7 +64,12 @@
         var next = qs("next");
         window.location.href = next ? decodeURIComponent(next) : DASHBOARD;
       } catch (x) {
-        showError(err, x.message || "Sign in failed.");
+        var msg = x && x.message ? String(x.message) : "Sign in failed.";
+        if (/failed to fetch|networkerror|load failed/i.test(msg)) {
+          msg =
+            "Cannot reach the API. Start the backend: python manage.py runserver 8000 (then hard-refresh this page).";
+        }
+        showError(err, msg);
       } finally {
         if (btn) {
           btn.disabled = false;

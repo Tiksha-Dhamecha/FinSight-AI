@@ -59,7 +59,12 @@
         });
         window.location.href = DASHBOARD;
       } catch (x) {
-        showError(x.message || "Registration failed.");
+        var msg = x && x.message ? String(x.message) : "Registration failed.";
+        if (/failed to fetch|networkerror|load failed/i.test(msg)) {
+          msg =
+            "Cannot reach the API. Start the backend from the project’s backend folder: python manage.py runserver 8000 (then hard-refresh this page).";
+        }
+        showError(msg);
       } finally {
         if (btn) {
           btn.disabled = false;
