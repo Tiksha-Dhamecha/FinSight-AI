@@ -32,6 +32,15 @@ class TransactionViewSet(viewsets.ModelViewSet):
         data = build_cash_flow_for_user(request.user, preset, start_s, end_s)
         return Response(data)
 
+    @action(detail=False, methods=["get"], url_path="operations")
+    def operations(self, request):
+        from .operations_service import build_operations_for_user
+        preset = request.query_params.get("range", "last_6_months")
+        start_s = request.query_params.get("start_date")
+        end_s = request.query_params.get("end_date")
+        data = build_operations_for_user(request.user, preset, start_s, end_s)
+        return Response(data)
+
     @action(detail=False, methods=["post"])
     def bulk_import(self, request):
         rows = request.data

@@ -1,443 +1,630 @@
 <!DOCTYPE html>
-
 <html class="light" lang="en"><head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>Operational Performance | Executive Insight</title>
+<title>Operational Performance | FinSight AI</title>
 <!-- Fonts -->
 <link href="https://fonts.googleapis.com" rel="preconnect"/>
 <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Manrope:wght@600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Manrope:wght@600;700;800&display=swap" rel="stylesheet"/>
 <!-- Icons -->
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
 <!-- Tailwind -->
 <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
 <script id="tailwind-config">
-      tailwind.config = {
-        darkMode: "class",
-        theme: {
-          extend: {
-            colors: {
-              "secondary": "#006d3d",
-              "on-primary": "#ffffff",
-              "error": "#ba1a1a",
-              "surface-dim": "#d8dadd",
-              "primary-fixed": "#d2e4fb",
-              "secondary-container": "#97f3b5",
-              "inverse-surface": "#2d3133",
-              "on-secondary": "#ffffff",
-              "background": "#f7f9fc",
-              "outline": "#74777d",
-              "surface-bright": "#f7f9fc",
-              "on-primary-fixed": "#0b1d2d",
-              "on-primary-fixed-variant": "#38485a",
-              "on-secondary-fixed": "#00210f",
-              "on-tertiary-fixed": "#261a00",
-              "surface-container": "#eceef1",
-              "surface-container-high": "#e6e8eb",
-              "secondary-fixed": "#9af6b8",
-              "error-container": "#ffdad6",
-              "secondary-fixed-dim": "#7ed99e",
-              "on-tertiary-container": "#b88900",
-              "on-tertiary-fixed-variant": "#5c4300",
-              "tertiary-fixed": "#ffdfa0",
-              "primary": "#041627",
-              "on-secondary-container": "#047240",
-              "inverse-primary": "#b7c8de",
-              "on-primary-container": "#8192a7",
-              "on-secondary-fixed-variant": "#00522d",
-              "outline-variant": "#c4c6cd",
-              "surface": "#f7f9fc",
-              "on-surface-variant": "#44474c",
-              "surface-variant": "#e0e3e6",
-              "on-error-container": "#93000a",
-              "on-background": "#191c1e",
-              "on-surface": "#191c1e",
-              "primary-container": "#1a2b3c",
-              "inverse-on-surface": "#eff1f4",
-              "tertiary": "#1e1300",
-              "surface-container-lowest": "#ffffff",
-              "tertiary-fixed-dim": "#fbbc00",
-              "on-tertiary": "#ffffff",
-              "primary-fixed-dim": "#b7c8de",
-              "surface-container-low": "#f2f4f7",
-              "tertiary-container": "#372700",
-              "surface-container-highest": "#e0e3e6",
-              "surface-tint": "#4f6073",
-              "on-error": "#ffffff"
-            },
-            fontFamily: {
-              "headline": ["Manrope"],
-              "body": ["Inter"],
-              "label": ["Inter"]
-            },
-            borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
-          },
+  tailwind.config = {
+    darkMode: "class",
+    theme: {
+      extend: {
+        colors: {
+          "secondary": "#006d3d",
+          "on-primary": "#ffffff",
+          "error": "#ba1a1a",
+          "surface-dim": "#d8dadd",
+          "primary-fixed": "#d2e4fb",
+          "secondary-container": "#97f3b5",
+          "inverse-surface": "#2d3133",
+          "on-secondary": "#ffffff",
+          "background": "#f7f9fc",
+          "outline": "#74777d",
+          "surface-bright": "#f7f9fc",
+          "on-primary-fixed": "#0b1d2d",
+          "on-primary-fixed-variant": "#38485a",
+          "on-secondary-fixed": "#00210f",
+          "on-tertiary-fixed": "#261a00",
+          "surface-container": "#eceef1",
+          "surface-container-high": "#e6e8eb",
+          "secondary-fixed": "#9af6b8",
+          "error-container": "#ffdad6",
+          "secondary-fixed-dim": "#7ed99e",
+          "on-tertiary-container": "#b88900",
+          "on-tertiary-fixed-variant": "#5c4300",
+          "tertiary-fixed": "#ffdfa0",
+          "primary": "#041627",
+          "on-secondary-container": "#047240",
+          "inverse-primary": "#b7c8de",
+          "on-primary-container": "#8192a7",
+          "on-secondary-fixed-variant": "#00522d",
+          "outline-variant": "#c4c6cd",
+          "surface": "#f7f9fc",
+          "on-surface-variant": "#44474c",
+          "surface-variant": "#e0e3e6",
+          "on-error-container": "#93000a",
+          "on-background": "#191c1e",
+          "on-surface": "#191c1e",
+          "primary-container": "#1a2b3c",
+          "inverse-on-surface": "#eff1f4",
+          "tertiary": "#1e1300",
+          "surface-container-lowest": "#ffffff",
+          "tertiary-fixed-dim": "#fbbc00",
+          "on-tertiary": "#ffffff",
+          "primary-fixed-dim": "#b7c8de",
+          "surface-container-low": "#f2f4f7",
+          "tertiary-container": "#372700",
+          "surface-container-highest": "#e0e3e6",
+          "surface-tint": "#4f6073",
+          "on-error": "#ffffff"
         },
-      }
-    </script>
+        fontFamily: {
+          "headline": ["Manrope"],
+          "body": ["Inter"],
+          "label": ["Inter"]
+        },
+        borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+      },
+    },
+  }
+</script>
 <style>
-        .material-symbols-outlined {
-            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
-        }
-        body { font-family: 'Inter', sans-serif; }
-        h1, h2, h3, .display-font { font-family: 'Manrope', sans-serif; }
-    </style>
+  .material-symbols-outlined {
+    font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+    vertical-align: middle;
+  }
+  body { font-family: 'Inter', sans-serif; }
+  h1, h2, h3, h4, .display-font { font-family: 'Manrope', sans-serif; }
+
+  /* Chart bar animation */
+  .chart-bar {
+    transition: height 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+    min-height: 2px;
+  }
+  .bar-group:hover .chart-bar { opacity: 1; filter: brightness(1.15); }
+
+  /* Skeleton pulse for loading state */
+  .skeleton {
+    background: linear-gradient(90deg, #e2e8f0 25%, #f1f5f9 50%, #e2e8f0 75%);
+    background-size: 200% 100%;
+    animation: shimmer 1.5s infinite;
+    border-radius: 0.25rem;
+  }
+  @keyframes shimmer {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+  }
+</style>
 </head>
 <body class="bg-background text-on-background min-h-screen">
 <script src="../js/config.js"></script>
 <script src="../js/auth.js"></script>
 <script src="../js/auth-guard.js"></script>
-<!-- SideNavBar Shell -->
+
+<!-- ===================== SIDE NAV ===================== -->
 <aside class="fixed left-0 top-0 h-full flex flex-col h-screen w-64 bg-slate-50 font-manrope antialiased z-50">
-<div class="px-6 py-8">
-<div class="flex items-center gap-3 mb-10">
-<div class="w-8 h-8 bg-primary rounded-lg flex items-center justify-center text-on-primary">
-<span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">insights</span>
-</div>
-<h1 class="text-xl font-bold text-blue-950">Executive Insight</h1>
-</div>
-<nav class="space-y-1">
-<a class="flex items-center gap-3 px-3 py-2 text-slate-500 font-medium hover:bg-slate-200/50 transition-colors rounded-lg group" href="../main_health_dashboard/code.html">
-<span class="material-symbols-outlined text-xl">dashboard</span>
-                    Dashboard
-                </a>
-<a class="flex items-center gap-3 px-3 py-2 text-slate-500 font-medium hover:bg-slate-200/50 transition-colors rounded-lg group" href="../data_entry_import/code.html">
-<span class="material-symbols-outlined text-xl">receipt_long</span>
-                    Transactions
-                </a>
-<a class="flex items-center gap-3 px-3 py-2 text-slate-500 font-medium hover:bg-slate-200/50 transition-colors rounded-lg group" href="../financial_analytics_trends/code.html">
-<span class="material-symbols-outlined text-xl">insights</span>
-                    Analytics
-                </a>
-<a class="flex items-center gap-3 px-3 py-2 text-slate-500 font-medium hover:bg-slate-200/50 transition-colors rounded-lg group" href="../anomalies_recommendations/code.html">
-<span class="material-symbols-outlined text-xl">warning</span>
-                    Anomalies
-                </a>
-<a class="flex items-center gap-3 px-3 py-2 text-slate-500 font-medium hover:bg-slate-200/50 transition-colors rounded-lg group" href="../cash_flow_liquidity/code.html">
-<span class="material-symbols-outlined text-xl">account_balance_wallet</span>
-                    Cash Flow
-                </a>
-<!-- Active Item -->
-<a class="flex items-center gap-3 px-3 py-2 text-blue-950 font-bold border-r-4 border-blue-950 transition-colors rounded-l-lg bg-slate-100/50" href="#">
-<span class="material-symbols-outlined text-xl" style="font-variation-settings: 'FILL' 1;">precision_manufacturing</span>
-                    Operations
-                </a>
-<a class="flex items-center gap-3 px-3 py-2 text-slate-500 font-medium hover:bg-slate-200/50 transition-colors rounded-lg group" href="../financial_atelier_executive_dashboard/code.html">
-<span class="material-symbols-outlined text-xl">assessment</span>
-                    Reports
-                </a>
-<a class="flex items-center gap-3 px-3 py-2 text-slate-500 font-medium hover:bg-slate-200/50 transition-colors rounded-lg group" href="../business_setup_onboarding/code.html">
-<span class="material-symbols-outlined text-xl">settings</span>
-                    Settings
-                </a>
-</nav>
-</div>
-<div class="mt-auto p-6">
-<div class="bg-surface-container rounded-xl p-4 flex items-center gap-3">
-<div class="w-10 h-10 rounded-full bg-primary-container flex items-center justify-center text-on-primary-container">
-<img alt="Business Logo" class="w-10 h-10 rounded-full object-cover" data-alt="professional headshot of a business executive in a modern office with soft natural lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBoGILgSyV3JfSreAKQclvgh8m9lCO5qRj9NiacmG7UTSl1WlNn46smBl9xFl80YX1XvvyOM-xCf8YS0Dv3O9bdNcxkybofGBB1xDAKWqtkv1HuQTHwelmA3Bwc1kb6vcfat6OxvVSKqcaUdS85xVJKaon5-fo3uDtMmnrtjdV09YNB-mWhi87yANl2SfAYbXiVdV9qOF0qgJNw_KqCUmkhvnjM02d29p56q1-NUtM1SjswfSZHyezAdGsCXmC5l5CkJ93cYqUEsHk"/>
-</div>
-<div>
-<p class="text-sm font-bold text-blue-950">Atelier Admin</p>
-<p class="text-xs text-slate-500">SME Framework</p>
-</div>
-</div>
-</div>
+  <div class="px-6 py-8">
+    <div class="flex items-center gap-3 mb-10">
+      <div class="w-8 h-8 bg-primary rounded-lg flex items-center justify-center text-on-primary">
+        <span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">insights</span>
+      </div>
+      <h1 class="text-xl font-bold text-blue-950">Executive Insight</h1>
+    </div>
+    <nav class="space-y-1">
+      <a class="flex items-center gap-3 px-3 py-2 text-slate-500 font-medium hover:bg-slate-200/50 transition-colors rounded-lg" href="../main_health_dashboard/code.html">
+        <span class="material-symbols-outlined text-xl">dashboard</span> Dashboard
+      </a>
+      <a class="flex items-center gap-3 px-3 py-2 text-slate-500 font-medium hover:bg-slate-200/50 transition-colors rounded-lg" href="../data_entry_import/code.html">
+        <span class="material-symbols-outlined text-xl">receipt_long</span> Transactions
+      </a>
+      <a class="flex items-center gap-3 px-3 py-2 text-slate-500 font-medium hover:bg-slate-200/50 transition-colors rounded-lg" href="../financial_analytics_trends/code.html">
+        <span class="material-symbols-outlined text-xl">insights</span> Analytics
+      </a>
+      <a class="flex items-center gap-3 px-3 py-2 text-slate-500 font-medium hover:bg-slate-200/50 transition-colors rounded-lg" href="../anomalies_recommendations/code.html">
+        <span class="material-symbols-outlined text-xl">warning</span> Anomalies
+      </a>
+      <a class="flex items-center gap-3 px-3 py-2 text-slate-500 font-medium hover:bg-slate-200/50 transition-colors rounded-lg" href="../cash_flow_liquidity/code.html">
+        <span class="material-symbols-outlined text-xl">account_balance_wallet</span> Cash Flow
+      </a>
+      <!-- Active -->
+      <a class="flex items-center gap-3 px-3 py-2 text-blue-950 font-bold border-r-4 border-blue-950 transition-colors rounded-l-lg bg-slate-100/50" href="#">
+        <span class="material-symbols-outlined text-xl" style="font-variation-settings: 'FILL' 1;">precision_manufacturing</span> Operations
+      </a>
+      <a class="flex items-center gap-3 px-3 py-2 text-slate-500 font-medium hover:bg-slate-200/50 transition-colors rounded-lg" href="../financial_atelier_executive_dashboard/code.html">
+        <span class="material-symbols-outlined text-xl">assessment</span> Reports
+      </a>
+      <a class="flex items-center gap-3 px-3 py-2 text-slate-500 font-medium hover:bg-slate-200/50 transition-colors rounded-lg" href="../business_setup_onboarding/code.html">
+        <span class="material-symbols-outlined text-xl">settings</span> Settings
+      </a>
+    </nav>
+  </div>
+  <div class="mt-auto p-6">
+    <div class="bg-surface-container rounded-xl p-4 flex items-center gap-3">
+      <div class="w-10 h-10 rounded-full bg-primary-container flex items-center justify-center text-on-primary-container">
+        <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">account_circle</span>
+      </div>
+      <div>
+        <p class="text-sm font-bold text-blue-950" id="nav-user-name">Loading...</p>
+        <p class="text-xs text-slate-500">SME Framework</p>
+      </div>
+    </div>
+  </div>
 </aside>
-<!-- Main Canvas -->
+
+<!-- ===================== MAIN ===================== -->
 <main class="ml-64 min-h-screen">
-<!-- TopNavBar Shell -->
-<header class="sticky top-0 z-40 flex justify-between items-center w-full px-8 py-4 bg-slate-50/80 backdrop-blur-md font-manrope tracking-tight">
-<div class="flex items-center gap-6">
-<span class="text-lg font-extrabold text-blue-950">Financial Atelier</span>
-<div class="relative">
-<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm">search</span>
-<input class="pl-10 pr-4 py-2 bg-surface-container-low rounded-full border-0 text-sm focus:ring-1 focus:ring-primary w-64 transition-all" placeholder="Search operations..." type="text"/>
-</div>
-</div>
-<div class="flex items-center gap-5">
-<button class="opacity-80 hover:opacity-100 cursor-pointer transition-all">
-<span class="material-symbols-outlined text-blue-950">calendar_today</span>
-</button>
-<button class="opacity-80 hover:opacity-100 cursor-pointer transition-all relative">
-<span class="material-symbols-outlined text-blue-950">notifications</span>
-<span class="absolute top-0 right-0 w-2 h-2 bg-error rounded-full border-2 border-slate-50"></span>
-</button>
-<button class="opacity-80 hover:opacity-100 cursor-pointer transition-all">
-<span class="material-symbols-outlined text-blue-950">account_circle</span>
-</button>
-</div>
-</header>
-<!-- Content Area -->
-<div class="p-10 max-w-7xl mx-auto space-y-10">
-<!-- Hero Header Section -->
-<section class="flex flex-col md:flex-row justify-between items-end gap-6">
-<div>
-<p class="text-sm font-bold uppercase tracking-widest text-on-primary-container mb-2">Internal Diagnostics</p>
-<h2 class="text-5xl font-extrabold text-primary leading-tight">Operational Performance</h2>
-</div>
-<div class="flex gap-3">
-<button class="px-6 py-3 bg-primary text-on-primary rounded-xl font-bold flex items-center gap-2 transition-all hover:shadow-xl shadow-primary/10">
-<span class="material-symbols-outlined text-sm">download</span>
-                        Export Manifest
-                    </button>
-</div>
-</section>
-<!-- Top Row: Core Metrics Bento -->
-<section class="grid grid-cols-1 md:grid-cols-4 gap-6">
-<!-- Orders Completed -->
-<div class="bg-surface-container-lowest p-8 rounded-xl relative overflow-hidden group">
-<div class="relative z-10">
-<p class="text-on-surface-variant font-medium text-sm mb-4">Orders Completed</p>
-<h3 class="text-4xl font-extrabold text-primary mb-2">512</h3>
-<div class="flex items-center gap-1 text-secondary font-bold text-sm">
-<span class="material-symbols-outlined text-sm">trending_up</span>
-                            +8.4%
-                        </div>
-</div>
-<div class="absolute -bottom-4 -right-4 opacity-5 group-hover:opacity-10 transition-opacity">
-<span class="material-symbols-outlined text-[120px]">shopping_cart</span>
-</div>
-</div>
-<!-- Repeat Customer Rate -->
-<div class="bg-surface-container-lowest p-8 rounded-xl relative overflow-hidden group">
-<div class="relative z-10">
-<p class="text-on-surface-variant font-medium text-sm mb-4">Repeat Rate</p>
-<h3 class="text-4xl font-extrabold text-primary mb-2">65.2%</h3>
-<div class="flex items-center gap-1 text-secondary font-bold text-sm">
-<span class="material-symbols-outlined text-sm">verified</span>
-                            Healthy Ret.
-                        </div>
-</div>
-<div class="absolute -bottom-4 -right-4 opacity-5 group-hover:opacity-10 transition-opacity">
-<span class="material-symbols-outlined text-[120px]">person_check</span>
-</div>
-</div>
-<!-- Fulfillment Efficiency -->
-<div class="bg-surface-container-lowest p-8 rounded-xl relative overflow-hidden group">
-<div class="relative z-10">
-<p class="text-on-surface-variant font-medium text-sm mb-4">Fulfillment</p>
-<h3 class="text-4xl font-extrabold text-primary mb-2">92.0%</h3>
-<div class="flex items-center gap-1 text-on-tertiary-container font-bold text-sm">
-<span class="material-symbols-outlined text-sm">timer</span>
-                            On Schedule
-                        </div>
-</div>
-<div class="absolute -bottom-4 -right-4 opacity-5 group-hover:opacity-10 transition-opacity">
-<span class="material-symbols-outlined text-[120px]">package_2</span>
-</div>
-</div>
-<!-- Customer Growth -->
-<div class="bg-surface-container-lowest p-8 rounded-xl relative overflow-hidden group">
-<div class="relative z-10">
-<p class="text-on-surface-variant font-medium text-sm mb-4">Growth Rate</p>
-<h3 class="text-4xl font-extrabold text-primary mb-2">+12%</h3>
-<div class="flex items-center gap-1 text-secondary font-bold text-sm">
-<span class="material-symbols-outlined text-sm">group_add</span>
-                            142 New
-                        </div>
-</div>
-<div class="absolute -bottom-4 -right-4 opacity-5 group-hover:opacity-10 transition-opacity">
-<span class="material-symbols-outlined text-[120px]">query_stats</span>
-</div>
-</div>
-</section>
-<!-- Middle Section: Detailed Analysis -->
-<section class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-<!-- Operational vs Financial Correlation (2/3 width) -->
-<div class="lg:col-span-2 bg-surface-container-lowest p-10 rounded-xl relative">
-<div class="flex justify-between items-start mb-12">
-<div>
-<h3 class="text-2xl font-bold text-primary mb-2">Volume vs. Revenue Velocity</h3>
-<p class="text-on-surface-variant text-sm max-w-md">Correlating total fulfillment volume with gross revenue peaks to identify bandwidth bottlenecks.</p>
-</div>
-<div class="flex items-center gap-4 text-xs font-bold uppercase tracking-wider">
-<div class="flex items-center gap-2">
-<span class="w-3 h-3 rounded-full bg-primary"></span>
-                                Revenue
-                            </div>
-<div class="flex items-center gap-2">
-<span class="w-3 h-3 rounded-full bg-secondary"></span>
-                                Orders
-                            </div>
-</div>
-</div>
-<!-- Simplified Elegant Chart Visualization -->
-<div class="h-64 flex items-end justify-between gap-4 relative">
-<!-- Background Grid Lines (Subtle) -->
-<div class="absolute inset-0 flex flex-col justify-between pointer-events-none">
-<div class="border-t border-outline-variant/10 w-full h-px"></div>
-<div class="border-t border-outline-variant/10 w-full h-px"></div>
-<div class="border-t border-outline-variant/10 w-full h-px"></div>
-<div class="border-t border-outline-variant/10 w-full h-px"></div>
-</div>
-<!-- Mock Chart Bars/Lines -->
-<div class="flex flex-col items-center gap-2 flex-1 group">
-<div class="w-full flex justify-center gap-1 items-end h-full">
-<div class="w-4 bg-primary/20 rounded-t-sm h-[40%] group-hover:bg-primary transition-all"></div>
-<div class="w-4 bg-secondary/20 rounded-t-sm h-[60%] group-hover:bg-secondary transition-all"></div>
-</div>
-<span class="text-[10px] text-slate-400 font-bold">MON</span>
-</div>
-<div class="flex flex-col items-center gap-2 flex-1 group">
-<div class="w-full flex justify-center gap-1 items-end h-full">
-<div class="w-4 bg-primary/20 rounded-t-sm h-[55%] group-hover:bg-primary transition-all"></div>
-<div class="w-4 bg-secondary/20 rounded-t-sm h-[45%] group-hover:bg-secondary transition-all"></div>
-</div>
-<span class="text-[10px] text-slate-400 font-bold">TUE</span>
-</div>
-<div class="flex flex-col items-center gap-2 flex-1 group">
-<div class="w-full flex justify-center gap-1 items-end h-full">
-<div class="w-4 bg-primary/20 rounded-t-sm h-[75%] group-hover:bg-primary transition-all"></div>
-<div class="w-4 bg-secondary/20 rounded-t-sm h-[90%] group-hover:bg-secondary transition-all"></div>
-</div>
-<span class="text-[10px] text-slate-400 font-bold">WED</span>
-</div>
-<div class="flex flex-col items-center gap-2 flex-1 group">
-<div class="w-full flex justify-center gap-1 items-end h-full">
-<div class="w-4 bg-primary/20 rounded-t-sm h-[85%] group-hover:bg-primary transition-all"></div>
-<div class="w-4 bg-secondary/20 rounded-t-sm h-[70%] group-hover:bg-secondary transition-all"></div>
-</div>
-<span class="text-[10px] text-slate-400 font-bold">THU</span>
-</div>
-<div class="flex flex-col items-center gap-2 flex-1 group">
-<div class="w-full flex justify-center gap-1 items-end h-full">
-<div class="w-4 bg-primary/20 rounded-t-sm h-[60%] group-hover:bg-primary transition-all"></div>
-<div class="w-4 bg-secondary/20 rounded-t-sm h-[80%] group-hover:bg-secondary transition-all"></div>
-</div>
-<span class="text-[10px] text-slate-400 font-bold">FRI</span>
-</div>
-<div class="flex flex-col items-center gap-2 flex-1 group">
-<div class="w-full flex justify-center gap-1 items-end h-full">
-<div class="w-4 bg-primary/20 rounded-t-sm h-[30%] group-hover:bg-primary transition-all"></div>
-<div class="w-4 bg-secondary/20 rounded-t-sm h-[20%] group-hover:bg-secondary transition-all"></div>
-</div>
-<span class="text-[10px] text-slate-400 font-bold">SAT</span>
-</div>
-<div class="flex flex-col items-center gap-2 flex-1 group">
-<div class="w-full flex justify-center gap-1 items-end h-full">
-<div class="w-4 bg-primary/20 rounded-t-sm h-[25%] group-hover:bg-primary transition-all"></div>
-<div class="w-4 bg-secondary/20 rounded-t-sm h-[15%] group-hover:bg-secondary transition-all"></div>
-</div>
-<span class="text-[10px] text-slate-400 font-bold">SUN</span>
-</div>
-</div>
-</div>
-<!-- Fulfillment Insights (1/3 width) -->
-<div class="bg-primary text-on-primary p-10 rounded-xl flex flex-col justify-between">
-<div>
-<span class="material-symbols-outlined text-4xl mb-6 text-secondary-container">bolt</span>
-<h3 class="text-2xl font-bold mb-4">Fulfillment Efficiency</h3>
-<p class="text-primary-fixed-dim text-sm leading-relaxed mb-8">Your average processing time has decreased by 14 minutes per order this week, leading to a direct uplift in customer satisfaction scores.</p>
-</div>
-<div class="space-y-6">
-<div class="flex items-center justify-between">
-<span class="text-xs font-bold uppercase tracking-wider opacity-60">Success Rate</span>
-<span class="text-xl font-bold">98.4%</span>
-</div>
-<div class="w-full bg-primary-container h-1 rounded-full">
-<div class="bg-secondary h-full w-[98.4%] rounded-full shadow-[0_0_10px_rgba(0,109,61,0.5)]"></div>
-</div>
-<div class="flex items-center justify-between">
-<span class="text-xs font-bold uppercase tracking-wider opacity-60">Avg. Delay</span>
-<span class="text-xl font-bold">4.2m</span>
-</div>
-<div class="w-full bg-primary-container h-1 rounded-full">
-<div class="bg-tertiary-fixed h-full w-[15%] rounded-full"></div>
-</div>
-</div>
-</div>
-</section>
-<!-- Bottom Section: Customer Profiles & History -->
-<section class="grid grid-cols-1 md:grid-cols-2 gap-8">
-<!-- Recent High-Value Repeat Orders -->
-<div class="bg-surface-container-low p-8 rounded-xl border border-outline-variant/10">
-<div class="flex items-center justify-between mb-8">
-<h3 class="text-xl font-extrabold text-primary">Repeat Activity</h3>
-<a class="text-xs font-bold text-secondary uppercase tracking-widest hover:underline" href="#">View All</a>
-</div>
-<div class="space-y-4">
-<div class="flex items-center justify-between p-4 bg-surface-container-lowest rounded-lg">
-<div class="flex items-center gap-4">
-<div class="w-10 h-10 rounded-full bg-surface-variant overflow-hidden">
-<img alt="User Profile" class="w-full h-full object-cover" data-alt="portrait of a confident woman smiling in an urban setting with golden light" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDChCOl1YqlT2Kqr_f1E6bRaoa7vykwxLwFUldqSCZoJCCf3iWK2fdCLBKuTpREBDm8_1bqOBmDQOovBli1oi9zxvQW-n41YRAlSKG3eFigCgxkpJKI1PVfF5PVKNJH3vHqwVS9UztFksE85_Hs0mZ91j_zhtcGEJH0UtUUjsYoiz4HLGOY0YGlg023rmT_he8dB692X6OKX5stID5FTrONxZAs1rKGHHScJLyc7gHkT5lpL5-mOhDSF2SIOhxvllfW1WW6sEv_vZM"/>
-</div>
-<div>
-<p class="text-sm font-bold text-primary">Alexandra Chen</p>
-<p class="text-[10px] text-on-surface-variant">12th Order • Platinum Member</p>
-</div>
-</div>
-<div class="text-right">
-<p class="text-sm font-bold text-secondary">$1,240.00</p>
-<p class="text-[10px] text-on-surface-variant">Confirmed</p>
-</div>
-</div>
-<div class="flex items-center justify-between p-4 bg-surface-container-lowest rounded-lg">
-<div class="flex items-center gap-4">
-<div class="w-10 h-10 rounded-full bg-surface-variant overflow-hidden">
-<img alt="User Profile" class="w-full h-full object-cover" data-alt="portrait of a man with spectacles in a thoughtful pose against a neutral studio background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA-I4ZMNmveZDWMVtg8pSQMrUEXMhaNTcpcjUPHQ681_JklJtzfpjGuNslp3G2BCZnRiB-NqM2_jUn_AB9JauTzMfRGabApSNl_sw5pWWUjLzm9OLrbhGrcYRakQ01XEbl4SLUJifQn1RlJV1IxHC87YVE7hiOVkJxR6BVsgeI4EOO1tTnE9uj2r8RAUSW4-H-ocoUs_I4MwYhPToEnd3IMMLPc9ovkDcCUxy_S1jPRZzQl7SSNGTWimwxHx1AxtxMuVFYulIgnSYs"/>
-</div>
-<div>
-<p class="text-sm font-bold text-primary">Marcus Holloway</p>
-<p class="text-[10px] text-on-surface-variant">5th Order • Gold Member</p>
-</div>
-</div>
-<div class="text-right">
-<p class="text-sm font-bold text-secondary">$890.50</p>
-<p class="text-[10px] text-on-surface-variant">Processing</p>
-</div>
-</div>
-<div class="flex items-center justify-between p-4 bg-surface-container-lowest rounded-lg">
-<div class="flex items-center gap-4">
-<div class="w-10 h-10 rounded-full bg-surface-variant overflow-hidden">
-<img alt="User Profile" class="w-full h-full object-cover" data-alt="young professional woman in a creative workspace with soft natural light" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCSsom1iH9LF6eSEq3WjFXymjXmZr_fD-6fz82dNOqcHmSVDNBDKXBU5_6t6-OcFw0J5eTOuFLJ4VUISeeeP9MAIkBw4QQbTukcfMLo966sI9TlVvGjwx-ir1mY5XnJ6Zh3YVUetJt9FKCy0YP9clfpnX91fA7b5KcW_EgZZTU6z71tVGNqEe3YDwsRaJbmw0JAZn32gyMoo07VOVoGhdavZeE_JngqfU6zkIxbItpvGiNguAKiynKWPXDWjA5pmuTdbLmDDtgesio"/>
-</div>
-<div>
-<p class="text-sm font-bold text-primary">Elena Rodriguez</p>
-<p class="text-[10px] text-on-surface-variant">8th Order • Platinum Member</p>
-</div>
-</div>
-<div class="text-right">
-<p class="text-sm font-bold text-secondary">$2,100.00</p>
-<p class="text-[10px] text-on-surface-variant">Shipped</p>
-</div>
-</div>
-</div>
-</div>
-<!-- Strategic Summary -->
-<div class="bg-surface-container-lowest p-8 rounded-xl border border-outline-variant/10 flex flex-col">
-<h3 class="text-xl font-extrabold text-primary mb-6">Strategic Intelligence</h3>
-<div class="flex-1 space-y-8">
-<div class="flex gap-4">
-<div class="w-12 h-12 rounded-xl bg-secondary-container flex items-center justify-center flex-shrink-0">
-<span class="material-symbols-outlined text-on-secondary-container" style="font-variation-settings: 'FILL' 1;">trending_up</span>
-</div>
-<div>
-<h4 class="font-bold text-primary mb-1">Customer Retention Surplus</h4>
-<p class="text-xs text-on-surface-variant leading-relaxed">Your 65% repeat customer rate is 15% above the industry average for SME boutique ateliers. This indicates strong brand equity and predictable future cash flow.</p>
-</div>
-</div>
-<div class="flex gap-4">
-<div class="w-12 h-12 rounded-xl bg-tertiary-fixed flex items-center justify-center flex-shrink-0">
-<span class="material-symbols-outlined text-on-tertiary-container" style="font-variation-settings: 'FILL' 1;">priority_high</span>
-</div>
-<div>
-<h4 class="font-bold text-primary mb-1">Scale Threshold Warning</h4>
-<p class="text-xs text-on-surface-variant leading-relaxed">Orders exceeded 500+ this month. Analysis suggests current logistics bandwidth will reach saturation at 620 orders. Consider early-stage fulfillment expansion.</p>
-</div>
-</div>
-</div>
-<div class="pt-8 mt-8 border-t border-outline-variant/10">
-<p class="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-4">Operational Status</p>
-<div class="flex items-center gap-2">
-<span class="w-2 h-2 rounded-full bg-secondary animate-pulse"></span>
-<span class="text-xs font-bold text-secondary">All Systems Healthy • Optimal Efficiency</span>
-</div>
-</div>
-</div>
-</section>
-</div>
-</main>
+
+  <!-- Top Bar -->
+  <header class="sticky top-0 z-40 flex justify-between items-center w-full px-8 py-4 bg-slate-50/80 backdrop-blur-md font-manrope tracking-tight">
+    <div class="flex items-center gap-6">
+      <span class="text-lg font-extrabold text-blue-950">Financial Atelier</span>
+      <div class="relative">
+        <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm">search</span>
+        <input class="pl-10 pr-4 py-2 bg-surface-container-low rounded-full border-0 text-sm focus:ring-1 focus:ring-primary w-64 transition-all" placeholder="Search operations..." type="text"/>
+      </div>
+    </div>
+    <div class="flex items-center gap-5">
+      <button class="opacity-80 hover:opacity-100 cursor-pointer transition-all">
+        <span class="material-symbols-outlined text-blue-950">calendar_today</span>
+      </button>
+      <button class="opacity-80 hover:opacity-100 cursor-pointer transition-all relative">
+        <span class="material-symbols-outlined text-blue-950">notifications</span>
+        <span class="absolute top-0 right-0 w-2 h-2 bg-error rounded-full border-2 border-slate-50"></span>
+      </button>
+      <button class="opacity-80 hover:opacity-100 cursor-pointer transition-all">
+        <span class="material-symbols-outlined text-blue-950">account_circle</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- Content -->
+  <div class="p-10 max-w-7xl mx-auto space-y-10">
+
+    <!-- ── PAGE HEADER ── -->
+    <section class="flex flex-col md:flex-row justify-between items-end gap-6">
+      <div>
+        <p class="text-sm font-bold uppercase tracking-widest text-on-primary-container mb-2">Internal Diagnostics</p>
+        <h2 class="text-5xl font-extrabold text-primary leading-tight">Operational Performance</h2>
+        <p class="text-on-surface-variant text-sm mt-2" id="ops-period-label">Loading period…</p>
+      </div>
+      <div class="flex gap-3 items-center">
+        <!-- Range filter -->
+        <select id="range-select" class="px-4 py-2 rounded-xl border border-outline-variant text-sm font-medium bg-surface-container-lowest text-primary focus:ring-1 focus:ring-primary">
+          <option value="last_6_months">Last 6 Months</option>
+          <option value="ytd">Year to Date</option>
+        </select>
+        <button id="export-btn" class="px-6 py-3 bg-primary text-on-primary rounded-xl font-bold flex items-center gap-2 transition-all hover:shadow-xl shadow-primary/10">
+          <span class="material-symbols-outlined text-sm">download</span>
+          Export Manifest
+        </button>
+      </div>
+    </section>
+
+    <!-- ── KPI BENTO GRID ── -->
+    <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6" id="kpi-grid">
+
+      <!-- Orders Completed -->
+      <div class="bg-surface-container-lowest p-8 rounded-xl relative overflow-hidden group hover:shadow-lg transition-shadow">
+        <div class="relative z-10">
+          <p class="text-on-surface-variant font-medium text-sm mb-4">Orders Completed</p>
+          <h3 class="text-4xl font-extrabold text-primary mb-2" id="kpi-orders-completed">
+            <span class="skeleton inline-block w-16 h-9">&nbsp;</span>
+          </h3>
+          <div class="flex items-center gap-1 text-secondary font-bold text-sm">
+            <span class="material-symbols-outlined text-sm">check_circle</span>
+            <span id="kpi-completed-sub">Cleared &amp; Fulfilled</span>
+          </div>
+        </div>
+        <div class="absolute -bottom-4 -right-4 opacity-5 group-hover:opacity-10 transition-opacity">
+          <span class="material-symbols-outlined text-[120px]">shopping_cart</span>
+        </div>
+      </div>
+
+      <!-- Orders Rejected -->
+      <div class="bg-surface-container-lowest p-8 rounded-xl relative overflow-hidden group hover:shadow-lg transition-shadow">
+        <div class="relative z-10">
+          <p class="text-on-surface-variant font-medium text-sm mb-4">Orders Rejected</p>
+          <h3 class="text-4xl font-extrabold text-error mb-2" id="kpi-orders-rejected">
+            <span class="skeleton inline-block w-12 h-9">&nbsp;</span>
+          </h3>
+          <div class="flex items-center gap-1 text-error font-bold text-sm">
+            <span class="material-symbols-outlined text-sm">cancel</span>
+            <span id="kpi-rejected-sub">Failed / Cancelled</span>
+          </div>
+        </div>
+        <div class="absolute -bottom-4 -right-4 opacity-5 group-hover:opacity-10 transition-opacity">
+          <span class="material-symbols-outlined text-[120px]">block</span>
+        </div>
+      </div>
+
+      <!-- Fulfillment Efficiency -->
+      <div class="bg-surface-container-lowest p-8 rounded-xl relative overflow-hidden group hover:shadow-lg transition-shadow">
+        <div class="relative z-10">
+          <p class="text-on-surface-variant font-medium text-sm mb-4">Fulfillment Efficiency</p>
+          <h3 class="text-4xl font-extrabold text-primary mb-2" id="kpi-fulfillment">
+            <span class="skeleton inline-block w-20 h-9">&nbsp;</span>
+          </h3>
+          <div class="flex items-center gap-1 text-on-tertiary-container font-bold text-sm">
+            <span class="material-symbols-outlined text-sm">timer</span>
+            <span id="kpi-fulfillment-sub">On-time vs Total</span>
+          </div>
+        </div>
+        <div class="absolute -bottom-4 -right-4 opacity-5 group-hover:opacity-10 transition-opacity">
+          <span class="material-symbols-outlined text-[120px]">package_2</span>
+        </div>
+      </div>
+
+      <!-- Growth Rate -->
+      <div class="bg-surface-container-lowest p-8 rounded-xl relative overflow-hidden group hover:shadow-lg transition-shadow">
+        <div class="relative z-10">
+          <p class="text-on-surface-variant font-medium text-sm mb-4">Growth Rate</p>
+          <h3 class="text-4xl font-extrabold text-primary mb-2" id="kpi-growth">
+            <span class="skeleton inline-block w-16 h-9">&nbsp;</span>
+          </h3>
+          <div class="flex items-center gap-1 font-bold text-sm" id="kpi-growth-sub">
+            <span class="material-symbols-outlined text-sm text-secondary">trending_flat</span>
+            <span class="text-secondary">vs Prior Period</span>
+          </div>
+        </div>
+        <div class="absolute -bottom-4 -right-4 opacity-5 group-hover:opacity-10 transition-opacity">
+          <span class="material-symbols-outlined text-[120px]">query_stats</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── MIDDLE: CHART + PROCESSING PANEL ── -->
+    <section class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+
+      <!-- Volume vs Revenue Velocity Chart (2/3) -->
+      <div class="lg:col-span-2 bg-surface-container-lowest p-10 rounded-xl">
+        <div class="flex justify-between items-start mb-8">
+          <div>
+            <h3 class="text-2xl font-bold text-primary mb-1">Volume vs. Revenue Velocity</h3>
+            <p class="text-on-surface-variant text-sm">Operational volume and revenue generated per weekday from real dataset.</p>
+          </div>
+          <div class="flex items-center gap-5 text-xs font-bold uppercase tracking-wider">
+            <div class="flex items-center gap-2">
+              <span class="w-3 h-3 rounded-full bg-primary inline-block"></span> Revenue
+            </div>
+            <div class="flex items-center gap-2">
+              <span class="w-3 h-3 rounded-full bg-secondary inline-block"></span> Volume
+            </div>
+          </div>
+        </div>
+
+        <!-- Chart area -->
+        <div class="relative" style="height: 220px;">
+          <!-- Horizontal grid lines -->
+          <div class="absolute inset-0 flex flex-col justify-between pointer-events-none" style="top:0;bottom:24px;">
+            <div class="border-t border-slate-100 w-full"></div>
+            <div class="border-t border-slate-100 w-full"></div>
+            <div class="border-t border-slate-100 w-full"></div>
+            <div class="border-t border-slate-100 w-full"></div>
+            <div class="border-t border-slate-200 w-full"></div>
+          </div>
+          <!-- Bar columns injected by JS -->
+          <div id="velocity-chart" class="absolute inset-0 flex items-end justify-around gap-1 px-2" style="bottom:0; padding-bottom:24px;">
+            <!-- JS renders day columns here -->
+          </div>
+          <!-- X-axis labels injected by JS -->
+          <div id="velocity-labels" class="absolute bottom-0 left-0 right-0 flex justify-around px-2" style="height:24px;">
+          </div>
+        </div>
+
+        <!-- No-data fallback (hidden by default) -->
+        <div id="chart-empty" class="hidden text-center py-10">
+          <span class="material-symbols-outlined text-4xl text-slate-300 mb-3 block">bar_chart</span>
+          <p class="text-sm text-on-surface-variant">No transaction data for this period. Add records to see the velocity graph.</p>
+        </div>
+      </div>
+
+      <!-- Processing Time & Late Fulfillment Panel (1/3) -->
+      <div class="bg-primary text-on-primary p-10 rounded-xl flex flex-col justify-between">
+        <div>
+          <span class="material-symbols-outlined text-4xl mb-5 block text-secondary-container" style="font-variation-settings: 'FILL' 1;">bolt</span>
+          <h3 class="text-xl font-bold mb-1">Avg. Processing Time</h3>
+          <div class="flex items-baseline gap-2 mb-4">
+            <span class="text-5xl font-extrabold" id="kpi-proc-time">--</span>
+            <span class="text-lg opacity-60">hrs</span>
+          </div>
+          <p class="text-primary-fixed-dim text-sm leading-relaxed mb-6" id="kpi-proc-trend-text">Loading trend…</p>
+
+          <!-- Trend pill -->
+          <div id="kpi-proc-trend-pill" class="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-bold bg-primary-container text-on-primary-container mb-6">
+            <span class="material-symbols-outlined text-sm">sync</span> Calculating…
+          </div>
+        </div>
+
+        <div class="space-y-5">
+          <div>
+            <div class="flex items-center justify-between mb-2">
+              <span class="text-xs font-bold uppercase tracking-wider opacity-60">Late Fulfillments</span>
+              <span class="text-xl font-bold" id="kpi-late">--</span>
+            </div>
+            <div class="w-full bg-primary-container h-1.5 rounded-full">
+              <div class="bg-error h-full rounded-full transition-all duration-700" id="kpi-late-bar" style="width:0%"></div>
+            </div>
+          </div>
+          <div>
+            <div class="flex items-center justify-between mb-2">
+              <span class="text-xs font-bold uppercase tracking-wider opacity-60">Fulfillment Efficiency</span>
+              <span class="text-xl font-bold" id="kpi-eff-stat">--%</span>
+            </div>
+            <div class="w-full bg-primary-container h-1.5 rounded-full">
+              <div class="bg-secondary-container h-full rounded-full transition-all duration-700" id="kpi-eff-bar" style="width:0%"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── BOTTOM: STRATEGY INTELLIGENCE (full width) ── -->
+    <section class="bg-surface-container-lowest p-10 rounded-xl border border-outline-variant/10">
+      <div class="flex items-start justify-between mb-8">
+        <div>
+          <h3 class="text-2xl font-extrabold text-primary mb-1">Strategic Intelligence</h3>
+          <p class="text-on-surface-variant text-sm">Data-driven operational assessment based on your actual records.</p>
+        </div>
+        <!-- Status badge -->
+        <div id="strategy-badge" class="flex items-center gap-2 px-4 py-2 rounded-full bg-surface-container text-sm font-bold">
+          <span class="w-2 h-2 rounded-full bg-slate-400 animate-pulse" id="strategy-dot"></span>
+          <span id="strategy-status-label">Loading…</span>
+        </div>
+      </div>
+
+      <!-- Recommendations grid -->
+      <div id="strategy-grid" class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+        <!-- Injected by JS -->
+        <div class="skeleton h-20 rounded-xl"></div>
+        <div class="skeleton h-20 rounded-xl"></div>
+      </div>
+
+      <!-- Summary bar -->
+      <div class="pt-6 border-t border-outline-variant/10 flex items-center gap-3">
+        <span class="w-2 h-2 rounded-full animate-pulse" id="strategy-pulse" style="background:#006d3d"></span>
+        <p class="text-sm text-on-surface-variant" id="strategy-summary">Loading operational summary…</p>
+      </div>
+    </section>
+
+  </div><!-- /content -->
+</main><!-- /main -->
+
+<!-- ===================== SCRIPT ===================== -->
+<script>
+(async function initOps() {
+  const token = localStorage.getItem("access_token");
+  if (!token) return;
+
+  const API = (window.FINSIGHT_API_ORIGIN || "http://127.0.0.1:8000");
+  const rangeEl = document.getElementById("range-select");
+
+  async function loadData(range) {
+    try {
+      const res = await fetch(`${API}/api/transactions/operations/?range=${range}`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      if (!res.ok) throw new Error("API error " + res.status);
+      return await res.json();
+    } catch (e) {
+      console.error("Ops API error:", e);
+      return null;
+    }
+  }
+
+  function fmtGrowth(g) {
+    if (g > 0) return "+" + g + "%";
+    return g + "%";
+  }
+
+  function renderKPIs(d) {
+    // Orders completed
+    document.getElementById("kpi-orders-completed").textContent = d.orders_completed;
+    document.getElementById("kpi-completed-sub").textContent =
+      `${d.total_operational} total operations`;
+
+    // Orders rejected
+    document.getElementById("kpi-orders-rejected").textContent = d.orders_rejected;
+    const rejRate = d.total_operational > 0
+      ? ((d.orders_rejected / d.total_operational) * 100).toFixed(1)
+      : 0;
+    document.getElementById("kpi-rejected-sub").textContent = `${rejRate}% rejection rate`;
+
+    // Fulfillment efficiency
+    document.getElementById("kpi-fulfillment").textContent = d.fulfillment_efficiency + "%";
+    const effLabel = d.fulfillment_efficiency >= 90 ? "Strong" :
+                     d.fulfillment_efficiency >= 75 ? "Stable" :
+                     d.fulfillment_efficiency >= 60 ? "Weak" : "At Risk";
+    document.getElementById("kpi-fulfillment-sub").textContent = effLabel + " — " + d.late_fulfillment + " late";
+
+    // Growth rate
+    document.getElementById("kpi-growth").textContent = fmtGrowth(d.growth_rate);
+    const gSub = document.getElementById("kpi-growth-sub");
+    const isPos = d.growth_rate >= 0;
+    gSub.innerHTML = `<span class="material-symbols-outlined text-sm ${isPos ? 'text-secondary' : 'text-error'}">${isPos ? 'trending_up' : 'trending_down'}</span>
+                      <span class="${isPos ? 'text-secondary' : 'text-error'}">${isPos ? 'Positive' : 'Negative'} Trend</span>`;
+
+    // Period label
+    document.getElementById("ops-period-label").textContent =
+      `Period: ${d.period.start} → ${d.period.end}`;
+  }
+
+  function renderProcessingPanel(d) {
+    document.getElementById("kpi-proc-time").textContent = d.avg_processing_time_hours;
+    document.getElementById("kpi-late").textContent = d.late_fulfillment;
+    document.getElementById("kpi-eff-stat").textContent = d.fulfillment_efficiency + "%";
+
+    // Bars
+    const latePct = d.total_operational > 0
+      ? Math.min(100, (d.late_fulfillment / d.total_operational) * 100)
+      : 0;
+    document.getElementById("kpi-late-bar").style.width = latePct + "%";
+    document.getElementById("kpi-eff-bar").style.width = d.fulfillment_efficiency + "%";
+
+    // Trend text & pill
+    const trend = d.processing_time_trend;
+    const trendMap = {
+      improvement: { text: `Processing time improved to ${d.avg_processing_time_hours}h (was ${d.prior_avg_processing_time_hours}h). Pipeline is getting faster.`, icon: "trending_down", label: "Improving", cls: "bg-secondary text-on-secondary" },
+      decline:     { text: `Processing time increased to ${d.avg_processing_time_hours}h (was ${d.prior_avg_processing_time_hours}h). Review pipeline bottlenecks.`, icon: "trending_up", label: "Slower", cls: "bg-error text-on-error" },
+      stable:      { text: `Processing time is stable at ${d.avg_processing_time_hours}h vs ${d.prior_avg_processing_time_hours}h prior period.`, icon: "trending_flat", label: "Stable", cls: "bg-primary-container text-on-primary-container" },
+    };
+    const t = trendMap[trend] || trendMap.stable;
+    document.getElementById("kpi-proc-trend-text").textContent = t.text;
+    document.getElementById("kpi-proc-trend-pill").innerHTML =
+      `<span class="material-symbols-outlined text-sm">${t.icon}</span> ${t.label}`;
+    document.getElementById("kpi-proc-trend-pill").className =
+      `inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-bold mb-6 ${t.cls}`;
+  }
+
+  function renderChart(d) {
+    const chartEl = document.getElementById("velocity-chart");
+    const labelsEl = document.getElementById("velocity-labels");
+    const emptyEl  = document.getElementById("chart-empty");
+
+    const totalVol = d.velocity_graph.reduce((s, x) => s + x.volume, 0);
+    const totalRev = d.velocity_graph.reduce((s, x) => s + x.revenue, 0);
+
+    if (totalVol === 0 && totalRev === 0) {
+      chartEl.parentElement.style.display = "none";
+      labelsEl.style.display = "none";
+      emptyEl.classList.remove("hidden");
+      return;
+    }
+
+    emptyEl.classList.add("hidden");
+
+    const maxVol = Math.max(...d.velocity_graph.map(x => x.volume), 1);
+    const maxRev = Math.max(...d.velocity_graph.map(x => x.revenue), 1);
+
+    // Mini formatter for revenue tooltip
+    function fmtRev(v) {
+      if (v >= 1000000) return "₹" + (v/1000000).toFixed(1) + "M";
+      if (v >= 1000)    return "₹" + (v/1000).toFixed(1) + "K";
+      return "₹" + v.toFixed(0);
+    }
+
+    chartEl.innerHTML = "";
+    labelsEl.innerHTML = "";
+
+    d.velocity_graph.forEach(day => {
+      const revPct = Math.max(2, (day.revenue / maxRev) * 100);
+      const volPct = Math.max(2, (day.volume  / maxVol)  * 100);
+
+      // Bar group
+      const group = document.createElement("div");
+      group.className = "bar-group flex flex-col items-center flex-1";
+      group.style.height = "100%";
+      group.title = `${day.day} — Vol: ${day.volume} | Rev: ${fmtRev(day.revenue)}`;
+
+      group.innerHTML = `
+        <div class="flex items-end justify-center gap-1 w-full" style="height:100%">
+          <div class="chart-bar rounded-t-md w-4" style="height:${revPct}%; background: rgba(4,22,39,0.75);" title="Revenue: ${fmtRev(day.revenue)}"></div>
+          <div class="chart-bar rounded-t-md w-4" style="height:${volPct}%; background: rgba(0,109,61,0.75);" title="Volume: ${day.volume}"></div>
+        </div>
+      `;
+      chartEl.appendChild(group);
+
+      // Label
+      const lbl = document.createElement("div");
+      lbl.className = "flex-1 text-center text-[10px] text-slate-400 font-bold leading-6";
+      lbl.textContent = day.day;
+      labelsEl.appendChild(lbl);
+    });
+  }
+
+  function renderStrategy(d) {
+    const strat = d.strategy;
+    const grid  = document.getElementById("strategy-grid");
+    const badge = document.getElementById("strategy-badge");
+    const dot   = document.getElementById("strategy-dot");
+    const label = document.getElementById("strategy-status-label");
+    const pulse = document.getElementById("strategy-pulse");
+    const sumEl = document.getElementById("strategy-summary");
+
+    // Status colours
+    const statusMap = {
+      "Optimal":        { dot: "#006d3d", badge: "bg-secondary-container text-on-secondary-container", pulse: "#006d3d" },
+      "Efficient":      { dot: "#006d3d", badge: "bg-secondary-container text-on-secondary-container", pulse: "#006d3d" },
+      "Stable":         { dot: "#b88900", badge: "bg-tertiary-fixed text-on-tertiary-container",        pulse: "#b88900" },
+      "Needs Attention":{ dot: "#b88900", badge: "bg-tertiary-fixed text-on-tertiary-container",        pulse: "#b88900" },
+      "At Risk":        { dot: "#ba1a1a", badge: "bg-error-container text-on-error-container",          pulse: "#ba1a1a" },
+      "No Data":        { dot: "#74777d", badge: "bg-surface-container text-on-surface-variant",        pulse: "#74777d" },
+    };
+    const sc = statusMap[strat.status] || statusMap["Stable"];
+
+    dot.style.background   = sc.dot;
+    badge.className        = `flex items-center gap-2 px-4 py-2 rounded-full text-sm font-bold ${sc.badge}`;
+    pulse.style.background = sc.pulse;
+    label.textContent      = strat.status;
+    sumEl.textContent      = strat.summary;
+
+    const isHealthy = strat.status === "Optimal" || strat.status === "Efficient";
+
+    if (!strat.recommendations || strat.recommendations.length === 0) {
+      grid.innerHTML = `<div class="col-span-2 text-center py-8 text-on-surface-variant text-sm">No specific recommendations at this time.</div>`;
+      return;
+    }
+
+    grid.innerHTML = "";
+    strat.recommendations.forEach((rec, idx) => {
+      const icon  = isHealthy ? "check_circle" : (idx === 0 ? "priority_high" : "info");
+      const icCls = isHealthy
+        ? "bg-secondary-container text-on-secondary-container"
+        : (idx === 0 ? "bg-error-container text-on-error-container" : "bg-tertiary-fixed text-on-tertiary-container");
+
+      const card = document.createElement("div");
+      card.className = "flex gap-4 p-5 bg-surface-container-low rounded-xl";
+      card.innerHTML = `
+        <div class="w-11 h-11 rounded-xl ${icCls} flex items-center justify-center flex-shrink-0">
+          <span class="material-symbols-outlined text-sm" style="font-variation-settings:'FILL' 1;">${icon}</span>
+        </div>
+        <div>
+          <h4 class="font-bold text-primary text-sm mb-1">${isHealthy ? 'Optimisation Tip' : 'Action Required'}</h4>
+          <p class="text-xs text-on-surface-variant leading-relaxed">${rec}</p>
+        </div>
+      `;
+      grid.appendChild(card);
+    });
+  }
+
+  async function refresh() {
+    const range = rangeEl.value;
+    const data  = await loadData(range);
+    if (!data) {
+      document.getElementById("kpi-orders-completed").textContent = "—";
+      document.getElementById("kpi-orders-rejected").textContent  = "—";
+      document.getElementById("kpi-fulfillment").textContent       = "—";
+      document.getElementById("kpi-growth").textContent            = "—";
+      document.getElementById("strategy-summary").textContent      = "Could not load data. Check backend connection.";
+      return;
+    }
+    renderKPIs(data);
+    renderProcessingPanel(data);
+    renderChart(data);
+    renderStrategy(data);
+
+    // Set nav user name from JWT if available
+    try {
+      const payload = JSON.parse(atob(token.split(".")[1]));
+      const name = payload.username || payload.email || "User";
+      document.getElementById("nav-user-name").textContent = name;
+    } catch (_) {}
+  }
+
+  // Export button — simple window.print() manifest
+  document.getElementById("export-btn").addEventListener("click", () => window.print());
+
+  // Range change
+  rangeEl.addEventListener("change", refresh);
+
+  // Initial load
+  await refresh();
+})();
+</script>
 </body></html>
