@@ -3,7 +3,7 @@
  * Depends: config.js, auth.js, inr-format.js
  */
 (function () {
-  var API_BASE = String(window.FINSIGHT_API_ORIGIN || "http://127.0.0.1:8001").replace(/\/$/, "");
+  var API_BASE = String(window.FINSIGHT_API_ORIGIN || "http://127.0.0.1:8000").replace(/\/$/, "");
   var ANALYTICS_URL = API_BASE + "/api/transactions/analytics/";
   var currentFilter = "last_6_months";
 

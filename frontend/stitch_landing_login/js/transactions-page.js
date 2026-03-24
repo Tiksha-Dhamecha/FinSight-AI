@@ -4,7 +4,7 @@
  */
 (function () {
   var ENDPOINT =
-    String(window.FINSIGHT_API_ORIGIN || "http://127.0.0.1:8001").replace(/\/$/, "") +
+    String(window.FINSIGHT_API_ORIGIN || "http://127.0.0.1:8000").replace(/\/$/, "") +
     "/api/transactions/";
 
   function apiHeaders() {
