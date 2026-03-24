@@ -187,17 +187,13 @@
 <div class="flex justify-between items-start mb-12">
 <div>
 <h3 class="font-headline text-2xl font-bold text-primary mb-1">Gross Revenue Trend</h3>
-<p class="text-on-surface-variant text-sm flex items-center gap-1">
-                            Steady growth observed over Q1-Q2
-                            <span class="text-secondary font-bold flex items-center ml-2">
-<span class="material-symbols-outlined text-xs" data-icon="trending_up">trending_up</span>
-                                +12.4% vs prev.
-                            </span>
-</p>
+<p id="analytics-revenue-subline" class="text-on-surface-variant text-sm flex items-center gap-1 flex-wrap">
+                            Loading trend from your transactions…
+                        </p>
 </div>
 <div class="text-right">
-<span id="val-gross-revenue" class="text-3xl font-headline font-extrabold text-primary">$0.00</span>
-<p class="text-[10px] text-outline font-bold uppercase tracking-widest">Total Period Revenue</p>
+<span id="val-gross-revenue" class="text-3xl font-headline font-extrabold text-primary">₹0.00</span>
+<p class="text-[10px] text-outline font-bold uppercase tracking-widest">Total period revenue (₹)</p>
 </div>
 </div>
 <!-- Abstract Chart Visualization -->
@@ -238,7 +234,7 @@
 </svg>
 <div class="absolute inset-0 flex flex-col items-center justify-center">
 <span class="text-xs font-bold text-outline uppercase">Total</span>
-<span id="val-total-expense" class="text-lg font-extrabold text-primary">$0</span>
+<span id="val-total-expense" class="text-lg font-extrabold text-primary">₹0</span>
 </div>
 </div>
 <!-- Legend -->
@@ -247,55 +243,8 @@
 </div>
 </div>
 </section>
-<!-- Anomalies & Comparisons (Editorial Stats) -->
-<section class="col-span-12 lg:col-span-7 grid grid-cols-1 md:grid-cols-2 gap-6">
-<!-- Insight 1 -->
-<div class="bg-surface-container-lowest p-6 rounded-xl border-l-4 border-error">
-<div class="flex items-center gap-3 mb-4">
-<div class="bg-error-container text-on-error-container p-2 rounded-lg">
-<span class="material-symbols-outlined" data-icon="priority_high">priority_high</span>
-</div>
-<h4 class="font-headline font-bold text-primary">Expense Anomaly</h4>
-</div>
-<p class="text-on-surface-variant text-sm mb-4 leading-relaxed">
-                        Logistics spending spiked by <span class="text-error font-bold">22%</span> in Month 3, primarily due to fuel surcharges and expedited shipping.
-                    </p>
-<a class="text-primary font-bold text-xs uppercase tracking-widest flex items-center gap-1 hover:gap-2 transition-all" href="#">
-                        View Detail <span class="material-symbols-outlined text-sm" data-icon="chevron_right">chevron_right</span>
-</a>
-</div>
-<!-- Insight 2 -->
-<div class="bg-surface-container-lowest p-6 rounded-xl border-l-4 border-secondary">
-<div class="flex items-center gap-3 mb-4">
-<div class="bg-secondary-container text-on-secondary-container p-2 rounded-lg">
-<span class="material-symbols-outlined" data-icon="auto_awesome">auto_awesome</span>
-</div>
-<h4 class="font-headline font-bold text-primary">Efficiency Score</h4>
-</div>
-<p class="text-on-surface-variant text-sm mb-4 leading-relaxed">
-                        Revenue per employee has improved by <span class="text-secondary font-bold">$1.2k</span> as automation tools reduced manual processing time.
-                    </p>
-<a class="text-primary font-bold text-xs uppercase tracking-widest flex items-center gap-1 hover:gap-2 transition-all" href="#">
-                        Optimize Further <span class="material-symbols-outlined text-sm" data-icon="chevron_right">chevron_right</span>
-</a>
-</div>
-<!-- Summary Metric 1 -->
-<div class="bg-primary p-6 rounded-xl text-on-primary">
-<p class="text-[10px] font-bold uppercase tracking-[0.2em] opacity-60 mb-2">Net Cash Flow</p>
-<div class="flex items-end justify-between">
-<span class="text-3xl font-headline font-extrabold">$84,320</span>
-<span class="text-secondary-fixed text-sm font-bold">+5.2%</span>
-</div>
-</div>
-<!-- Summary Metric 2 -->
-<div class="bg-surface-container-lowest p-6 rounded-xl shadow-sm">
-<p class="text-[10px] text-outline font-bold uppercase tracking-[0.2em] mb-2">Customer Acquisition Cost</p>
-<div class="flex items-end justify-between">
-<span class="text-3xl font-headline font-extrabold text-primary">$42.00</span>
-<span class="text-error text-sm font-bold">-2.1%</span>
-</div>
-</div>
-</section>
+<!-- Insights from stored transactions (populated by analytics-trends-page.js) -->
+<section class="col-span-12 lg:col-span-7 grid grid-cols-1 md:grid-cols-2 gap-6" id="analytics-insights-grid"></section>
 </div>
 <!-- Footer / Action Area -->
 <footer class="mt-16 flex items-center justify-between border-t border-outline-variant/10 pt-8">
@@ -320,221 +269,6 @@
 <button class="fixed bottom-8 right-8 w-14 h-14 bg-primary text-on-primary rounded-xl shadow-2xl flex items-center justify-center hover:scale-105 transition-transform z-50">
 <span class="material-symbols-outlined" data-icon="add_chart" style="font-variation-settings: 'FILL' 1;">add_chart</span>
 </button>
-<script>
-    const API_BASE = window.FINSIGHT_API_ORIGIN || 'http://127.0.0.1:8001';
-    const ANALYTICS_ENDPOINT = `${API_BASE}/api/transactions/analytics/`;
-    let currentFilter = 'last_6_months';
-    let token = localStorage.getItem('token') || '';
-
-    const getHeaders = () => {
-        const headers = { 'Content-Type': 'application/json' };
-        if (token) headers['Authorization'] = `Token ${token}`;
-        return headers;
-    };
-
-    function toggleCustomRange() {
-        const inputs = document.getElementById('custom-range-inputs');
-        inputs.classList.toggle('hidden');
-        inputs.classList.toggle('flex');
-    }
-
-    function setFilter(range) {
-        currentFilter = range;
-        
-        // Update UI Button states
-        const btns = ['last_6_months', 'ytd', 'custom'];
-        btns.forEach(id => {
-            const el = document.getElementById('filter-' + id);
-            if(el) {
-                if (id === range) {
-                    el.className = "px-6 py-2 bg-surface-container-lowest text-primary font-semibold rounded-lg shadow-sm text-sm transition-colors";
-                } else {
-                    el.className = "px-6 py-2 text-slate-500 hover:text-primary font-semibold text-sm transition-colors";
-                }
-            }
-        });
-
-        fetchAnalytics();
-    }
-
-    const fmtCurrency = val => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(val);
-
-    async function fetchAnalytics() {
-        let url = `${ANALYTICS_ENDPOINT}?range=${currentFilter}`;
-        if (currentFilter === 'custom') {
-            const d1 = document.getElementById('custom-start').value;
-            const d2 = document.getElementById('custom-end').value;
-            if (d1 && d2) url += `&start_date=${d1}&end_date=${d2}`;
-        }
-
-        try {
-            const res = await fetch(url, { headers: getHeaders() });
-            if (!res.ok) throw new Error('API Analytics fetch failed');
-            const data = await res.json();
-            
-            document.getElementById('val-gross-revenue').innerText = fmtCurrency(data.gross_revenue);
-            document.getElementById('val-total-expense').innerText = data.total_expense >= 1000 ? '$' + (data.total_expense/1000).toFixed(1) + 'k' : fmtCurrency(data.total_expense);
-
-            renderRevenueChart(data.monthly_trend);
-            renderProfitBars(data.monthly_trend, data.gross_revenue, data.total_expense);
-            renderExpenseDonut(data.expense_allocation);
-            
-        } catch (err) {
-            console.error('Failed to load analytics', err);
-        }
-    }
-
-    function renderRevenueChart(trendData) {
-        const c = document.getElementById('revenue-chart-container');
-        if (!trendData || trendData.length === 0) {
-            c.innerHTML = `<p class="text-sm text-outline absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">No data generated for range</p>`;
-            return;
-        }
-
-        let maxRev = Math.max(...trendData.map(d => d.revenue));
-        if (maxRev === 0) maxRev = 100; // default for scaling empty
-
-        const width = 800; const height = 200;
-        const paddingBottom = 40;
-        const usableHeight = height - paddingBottom - 20;
-
-        let pathD = "";
-        const dx = width / Math.max(1, (trendData.length - 1));
-        const points = trendData.map((d, i) => {
-            const x = i * dx;
-            const y = height - paddingBottom - ((d.revenue / maxRev) * usableHeight);
-            if (i === 0) pathD += `M${x},${y} `;
-            else {
-                const prevX = (i - 1) * dx;
-                const prevY = height - paddingBottom - ((trendData[i-1].revenue / maxRev) * usableHeight);
-                const cp1X = prevX + dx * 0.5;
-                const cp1Y = prevY;
-                const cp2X = x - dx * 0.5;
-                const cp2Y = y;
-                pathD += `C${cp1X},${cp1Y} ${cp2X},${cp2Y} ${x},${y} `;
-            }
-            return {x, y, label: d.month};
-        });
-
-        let circlesHTML = '';
-        let labelsHTML = '<div class="absolute bottom-[-10px] inset-x-0 flex justify-between text-[10px] font-bold text-outline uppercase tracking-wider">';
-        
-        points.forEach((p, i) => {
-            circlesHTML += `<circle cx="${p.x}" cy="${p.y}" fill="#006d3d" r="${i===points.length-1 ? 6 : 4}" stroke="white" stroke-width="${i===points.length-1 ? 2 : 0}"></circle>`;
-            let pLabel = p.label;
-            labelsHTML += `<span>${pLabel}</span>`;
-        });
-        labelsHTML += '</div>';
-
-        c.innerHTML = `
-        <div class="absolute inset-x-0 bottom-[24px] h-[calc(100%-24px)] flex flex-col justify-between opacity-10">
-            <div class="border-b border-outline-variant w-full"></div>
-            <div class="border-b border-outline-variant w-full"></div>
-            <div class="border-b border-outline-variant w-full"></div>
-        </div>
-        <svg class="absolute inset-0 w-full h-[calc(100%-24px)] overflow-visible drop-shadow-xl" viewbox="0 0 ${width} ${height - paddingBottom}" preserveAspectRatio="none">
-            <path d="${pathD}" fill="none" stroke="#006d3d" stroke-width="3"></path>
-            <path d="${pathD} V${height - paddingBottom} H0 Z" fill="url(#chart-grad)" opacity="0.1"></path>
-            <defs>
-                <linearGradient id="chart-grad" x1="0%" x2="0%" y1="0%" y2="100%">
-                    <stop offset="0%" style="stop-color:#006d3d;stop-opacity:1"></stop>
-                    <stop offset="100%" style="stop-color:#006d3d;stop-opacity:0"></stop>
-                </linearGradient>
-            </defs>
-            ${circlesHTML}
-        </svg>
-        ${labelsHTML}
-        `;
-    }
-
-    function renderProfitBars(trendData, totRev, totExp) {
-        const c = document.getElementById('val-profit-bars');
-        const avgMarginEl = document.getElementById('val-avg-profit-margin');
-        const avgMarginBar = document.getElementById('val-avg-profit-bar');
-        
-        if (!trendData || trendData.length === 0) {
-            c.innerHTML = '';
-            avgMarginEl.innerText = '0%';
-            avgMarginBar.style.width = '0%';
-            return;
-        }
-
-        const overallProfit = totRev - totExp;
-        const avgMargin = totRev > 0 ? ((overallProfit / totRev) * 100).toFixed(1) : 0;
-        
-        avgMarginEl.innerText = avgMargin + '%';
-        let avgMarginELClass = avgMargin < 0 ? 'text-error' : 'text-primary';
-        avgMarginEl.className = `text-sm font-bold ${avgMarginELClass}`;
-        
-        let barColor = avgMargin < 0 ? 'bg-error' : 'bg-secondary';
-        avgMarginBar.className = `h-full transition-all duration-700 ${barColor}`;
-        avgMarginBar.style.width = Math.min(100, Math.max(0, parseFloat(avgMargin))) + '%';
-
-        let html = '';
-        let maxVal = Math.max(...trendData.map(d => Math.abs(d.profit)));
-        if(maxVal === 0) maxVal = 1;
-
-        trendData.forEach(d => {
-            const h = (Math.abs(d.profit) / maxVal) * 100;
-            const isNegative = d.profit < 0;
-            const bgClass = isNegative ? 'bg-error/70 group-hover:bg-error' : 'bg-primary group-hover:bg-primary-container';
-            const labelClass = isNegative ? 'text-error' : 'text-outline';
-            
-            html += `
-            <div class="flex flex-col items-center gap-2 group w-full relative">
-                <div class="${bgClass} w-full rounded-[2px] transition-all" style="height: ${Math.max(2, h)}%; ${isNegative ? 'opacity:0.8' : ''}"></div>
-                <span class="text-[10px] ${labelClass} font-bold whitespace-nowrap">${d.month}</span>
-            </div>
-            `;
-        });
-
-        c.innerHTML = html;
-    }
-
-    function renderExpenseDonut(allocation) {
-        const svg = document.getElementById('val-expense-donut');
-        const leg = document.getElementById('val-expense-legend');
-        
-        if (!allocation || allocation.length === 0) {
-            svg.innerHTML = '<circle cx="50" cy="50" fill="transparent" r="40" stroke="#f2f4f7" stroke-width="12"></circle>';
-            leg.innerHTML = '<p class="text-xs text-outline italic">No expenses recorded for this period.</p>';
-            return;
-        }
-
-        const colors = ['#041627', '#006d3d', '#1a2b3c', '#97f3b5', '#b7c8de', '#c4c6cd']; // primary, secondary, container, etc.
-        const circumference = 2 * Math.PI * 40; // ~251.3
-        
-        let svgHtml = '';
-        let legHtml = '';
-        let currentOffset = 0;
-
-        allocation.forEach((item, index) => {
-            const pct = item.percentage;
-            const strokeLength = (pct / 100) * circumference;
-            const gap = circumference - strokeLength;
-            
-            const color = colors[index % colors.length];
-
-            svgHtml += `<circle fill="transparent" cx="50" cy="50" r="40" stroke="${color}" stroke-dasharray="${strokeLength} ${gap}" stroke-dashoffset="${-currentOffset}" stroke-width="12" class="transition-all duration-700 ease-in-out"></circle>`;
-            
-            currentOffset += strokeLength;
-
-            legHtml += `
-            <div class="flex items-center justify-between">
-                <div class="flex items-center gap-2">
-                    <span class="w-3 h-3 rounded-sm" style="background-color: ${color}"></span>
-                    <span class="text-sm font-semibold text-primary truncate w-24" title="${item.category}">${item.category}</span>
-                </div>
-                <span class="text-sm font-bold">${pct.toFixed(1)}%</span>
-            </div>
-            `;
-        });
-
-        svg.innerHTML = svgHtml;
-        leg.innerHTML = legHtml;
-    }
-
-    // Auto-load on boot
-    window.addEventListener('DOMContentLoaded', () => setFilter('last_6_months'));
-</script>
+<script src="../js/inr-format.js"></script>
+<script src="../js/analytics-trends-page.js"></script>
 </body></html>

@@ -171,8 +171,8 @@
 <div class="flex flex-col md:flex-row md:items-end justify-between gap-6">
 <div class="max-w-2xl">
 <h1 class="font-headline font-extrabold text-5xl text-primary tracking-tight mb-4">Anomaly Detection</h1>
-<p class="font-body text-on-surface-variant text-lg leading-relaxed">
-                        Our AI engine has identified 3 significant deviations in your financial patterns. Addressing these promptly could save up to <span class="font-bold text-secondary">$12.4k</span> in projected losses.
+<p id="anomalies-hero-text" class="font-body text-on-surface-variant text-lg leading-relaxed">
+                        Loading insights from your transaction ledger…
                     </p>
 </div>
 <div class="flex items-center gap-2 bg-surface-container-low px-4 py-3 rounded-xl">
@@ -181,173 +181,14 @@
 </div>
 </div>
 </section>
-<!-- Bento Grid Layout -->
-<div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
-<!-- Primary Critical Anomaly (High Severity) -->
-<div class="lg:col-span-8 group">
-<div class="bg-surface-container-lowest rounded-xl p-8 editorial-shadow border-l-4 border-error relative overflow-hidden h-full flex flex-col justify-between">
-<div class="absolute top-0 right-0 p-6">
-<span class="bg-error-container text-on-error-container font-label text-[10px] uppercase tracking-widest px-3 py-1 rounded-sm font-bold">High Severity</span>
-</div>
-<div>
-<div class="flex items-center gap-4 mb-8">
-<div class="w-12 h-12 rounded-full bg-error/10 flex items-center justify-center">
-<span class="material-symbols-outlined text-error" data-icon="trending_up">trending_up</span>
-</div>
-<h3 class="font-headline font-bold text-2xl text-primary">Sudden 25% spike in Logistics costs</h3>
-</div>
-<div class="grid grid-cols-1 md:grid-cols-2 gap-12 mb-10">
-<div>
-<p class="font-label text-xs uppercase tracking-widest text-on-surface-variant mb-3 font-semibold">Why it matters</p>
-<p class="font-body text-on-surface leading-relaxed">
-                                    Current logistics spend is outpacing revenue growth by 12%. If left unaddressed, this will erode your net profit margin from 18% to 13.5% by end of Q3.
-                                </p>
-</div>
-<div class="bg-surface-container-low rounded-lg p-5">
-<p class="font-label text-xs uppercase tracking-widest text-on-surface-variant mb-3 font-semibold">Root Cause Analysis</p>
-<ul class="space-y-2 text-sm">
-<li class="flex items-start gap-2">
-<span class="material-symbols-outlined text-[16px] mt-0.5 text-tertiary-fixed-dim" data-icon="check_circle">check_circle</span>
-<span>Fuel surcharge increase from Primary Carrier</span>
-</li>
-<li class="flex items-start gap-2">
-<span class="material-symbols-outlined text-[16px] mt-0.5 text-tertiary-fixed-dim" data-icon="check_circle">check_circle</span>
-<span>Inefficient routing on East Coast corridor</span>
-</li>
-</ul>
-</div>
-</div>
-</div>
-<div class="flex flex-col md:flex-row items-center justify-between gap-6 border-t border-outline-variant/10 pt-8">
-<div class="flex items-center gap-3">
-<span class="material-symbols-outlined text-secondary" data-icon="psychology">psychology</span>
-<span class="font-body text-sm font-semibold">Recommendation: Address logistics spike via renegotiation.</span>
-</div>
-<button class="w-full md:w-auto px-8 py-3 bg-primary text-on-primary rounded-lg font-headline font-bold hover:opacity-90 transition-all flex items-center justify-center gap-2">
-<span>Follow up on logistics</span>
-<span class="material-symbols-outlined text-sm" data-icon="arrow_forward">arrow_forward</span>
-</button>
-</div>
-</div>
-</div>
-<!-- AI Summary Column -->
-<div class="lg:col-span-4 space-y-8">
-<div class="bg-primary text-on-primary rounded-xl p-6 editorial-shadow relative overflow-hidden">
-<div class="absolute -right-4 -bottom-4 opacity-10">
-<span class="material-symbols-outlined text-9xl" data-icon="auto_graph">auto_graph</span>
-</div>
-<h4 class="font-headline font-bold text-xl mb-4">Priority Actions</h4>
-<div class="space-y-4 relative z-10">
-<div class="flex items-center gap-4 bg-white/5 p-3 rounded-lg hover:bg-white/10 cursor-pointer transition-all">
-<span class="w-8 h-8 rounded-full bg-secondary text-on-secondary flex items-center justify-center font-bold text-xs italic">1</span>
-<p class="text-sm font-medium">Renegotiate Carrier Rates</p>
-</div>
-<div class="flex items-center gap-4 bg-white/5 p-3 rounded-lg hover:bg-white/10 cursor-pointer transition-all">
-<span class="w-8 h-8 rounded-full bg-secondary text-on-secondary flex items-center justify-center font-bold text-xs italic">2</span>
-<p class="text-sm font-medium">Send reminder to Client X</p>
-</div>
-<div class="flex items-center gap-4 bg-white/5 p-3 rounded-lg hover:bg-white/10 cursor-pointer transition-all">
-<span class="w-8 h-8 rounded-full bg-secondary text-on-secondary flex items-center justify-center font-bold text-xs italic">3</span>
-<p class="text-sm font-medium">Audit Seasonal Overheads</p>
-</div>
-</div>
-</div>
-<div class="bg-surface-container-low rounded-xl p-6">
-<h4 class="font-headline font-bold text-primary mb-4 flex items-center gap-2">
-<span class="material-symbols-outlined text-tertiary-fixed-dim" data-icon="tips_and_updates">tips_and_updates</span>
-                        Smart Insight
-                    </h4>
-<p class="font-body text-sm text-on-surface-variant italic leading-relaxed">
-                        "Your current burn rate has stabilized, but the anomalies detected represent a potential 4% drag on annual EBITDA if not resolved this week."
-                    </p>
-</div>
-</div>
-<!-- Medium Severity Anomaly -->
-<div class="lg:col-span-6">
-<div class="bg-surface-container-lowest rounded-xl p-6 editorial-shadow border-l-4 border-tertiary-fixed-dim h-full flex flex-col">
-<div class="flex items-center justify-between mb-6">
-<span class="bg-tertiary-fixed text-on-tertiary-fixed font-label text-[10px] uppercase tracking-widest px-2 py-0.5 rounded-sm font-bold">Medium Severity</span>
-<span class="material-symbols-outlined text-on-surface-variant" data-icon="more_horiz">more_horiz</span>
-</div>
-<div class="flex items-start gap-4 mb-6">
-<div class="w-10 h-10 rounded-lg bg-tertiary-fixed/20 flex items-center justify-center shrink-0">
-<span class="material-symbols-outlined text-tertiary-fixed-dim" data-icon="payments">payments</span>
-</div>
-<div>
-<h3 class="font-headline font-bold text-xl text-primary leading-tight">Delayed $15k payment from Client X</h3>
-<p class="font-body text-sm text-on-surface-variant mt-2">Invoice #8842 is now 14 days overdue. Historical data shows this client usually pays within 3 days of reminder.</p>
-</div>
-</div>
-<div class="mt-auto pt-6 border-t border-outline-variant/10 flex items-center justify-between">
-<span class="text-xs font-semibold text-error">Impact: Cash Flow Lag</span>
-<button class="text-primary font-headline font-bold text-sm flex items-center gap-1 hover:underline">
-                            Send reminder to Client X
-                            <span class="material-symbols-outlined text-sm" data-icon="mail">mail</span>
-</button>
-</div>
-</div>
-</div>
-<!-- Low Severity Anomaly -->
-<div class="lg:col-span-6">
-<div class="bg-surface-container-lowest rounded-xl p-6 editorial-shadow border-l-4 border-outline-variant h-full flex flex-col">
-<div class="flex items-center justify-between mb-6">
-<span class="bg-surface-container-high text-on-surface-variant font-label text-[10px] uppercase tracking-widest px-2 py-0.5 rounded-sm font-bold">Low Severity</span>
-<span class="material-symbols-outlined text-on-surface-variant" data-icon="more_horiz">more_horiz</span>
-</div>
-<div class="flex items-start gap-4 mb-6">
-<div class="w-10 h-10 rounded-lg bg-surface-container-high flex items-center justify-center shrink-0">
-<span class="material-symbols-outlined text-on-surface-variant" data-icon="calendar_month">calendar_month</span>
-</div>
-<div>
-<h3 class="font-headline font-bold text-xl text-primary leading-tight">Revenue dipped below seasonal trend</h3>
-<p class="font-body text-sm text-on-surface-variant mt-2">A minor 2.4% variance detected compared to the last 3-year average for May. Likely due to holiday weekend timing.</p>
-</div>
-</div>
-<div class="mt-auto pt-6 border-t border-outline-variant/10 flex items-center justify-between">
-<span class="text-xs font-semibold text-on-surface-variant">Impact: Minor Growth Variance</span>
-<button class="text-on-surface-variant font-headline font-bold text-sm flex items-center gap-1 hover:text-primary">
-                            Dismiss
-                            <span class="material-symbols-outlined text-sm" data-icon="close">close</span>
-</button>
-</div>
-</div>
-</div>
-<!-- Historical Context (Visual Decoration/Data Density) -->
-<div class="lg:col-span-12">
+<!-- Dynamic cards from stored transactions (see anomalies-page.js) -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-8" id="anomalies-cards-root"></div>
+<div class="mt-8">
 <div class="bg-white rounded-xl p-8 editorial-shadow overflow-hidden relative">
-<div class="flex items-center justify-between mb-8">
+<div class="flex items-center justify-between mb-4">
 <div>
-<h3 class="font-headline font-bold text-2xl text-primary">Detection History</h3>
-<p class="font-body text-sm text-on-surface-variant mt-1">AI performance and anomaly resolution trends</p>
-</div>
-<div class="flex gap-4">
-<div class="text-center">
-<p class="text-2xl font-bold text-secondary">92%</p>
-<p class="text-[10px] uppercase font-bold text-on-surface-variant">Resolution Rate</p>
-</div>
-<div class="w-[1px] bg-outline-variant/20"></div>
-<div class="text-center">
-<p class="text-2xl font-bold text-primary">4h</p>
-<p class="text-[10px] uppercase font-bold text-on-surface-variant">Avg Detection Time</p>
-</div>
-</div>
-</div>
-<!-- Decorative Chart Area -->
-<div class="h-32 w-full flex items-end gap-1 opacity-40">
-<div class="flex-1 bg-surface-container-high h-[40%] rounded-t-sm"></div>
-<div class="flex-1 bg-surface-container-high h-[60%] rounded-t-sm"></div>
-<div class="flex-1 bg-surface-container-high h-[35%] rounded-t-sm"></div>
-<div class="flex-1 bg-surface-container-high h-[55%] rounded-t-sm"></div>
-<div class="flex-1 bg-surface-container-high h-[90%] rounded-t-sm"></div>
-<div class="flex-1 bg-error/20 h-[85%] rounded-t-sm relative">
-<div class="absolute -top-2 left-1/2 -translate-x-1/2 w-2 h-2 rounded-full bg-error"></div>
-</div>
-<div class="flex-1 bg-surface-container-high h-[45%] rounded-t-sm"></div>
-<div class="flex-1 bg-surface-container-high h-[30%] rounded-t-sm"></div>
-<div class="flex-1 bg-surface-container-high h-[65%] rounded-t-sm"></div>
-<div class="flex-1 bg-surface-container-high h-[75%] rounded-t-sm"></div>
-<div class="flex-1 bg-surface-container-high h-[50%] rounded-t-sm"></div>
-<div class="flex-1 bg-secondary/20 h-[40%] rounded-t-sm"></div>
+<h3 class="font-headline font-bold text-2xl text-primary">Detection summary</h3>
+<p id="anomalies-history-blurb" class="font-body text-sm text-on-surface-variant mt-1">—</p>
 </div>
 </div>
 </div>
@@ -359,4 +200,6 @@
 </button>
 </div>
 </main>
+<script src="../js/inr-format.js"></script>
+<script src="../js/anomalies-page.js"></script>
 </body></html>

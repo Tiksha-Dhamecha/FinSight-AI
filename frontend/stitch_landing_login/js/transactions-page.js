@@ -157,10 +157,9 @@
         ? "text-error group-hover:bg-error-container/20"
         : "text-secondary group-hover:bg-secondary-container/20";
       var absAmt = Math.abs(amountVal);
-      var formattedAmount = new Intl.NumberFormat("en-US", {
-        style: "currency",
-        currency: "USD",
-      }).format(absAmt);
+      var formattedAmount = window.formatINR
+        ? window.formatINR(absAmt)
+        : "₹" + absAmt.toFixed(2);
 
       tr.innerHTML =
         '<td class="px-8 py-5">' +
