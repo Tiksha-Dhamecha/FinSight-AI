@@ -199,33 +199,35 @@
 </section>
 <!-- Bento Grid: Liquidity Insights -->
 <section class="grid grid-cols-1 md:grid-cols-12 gap-8">
-<!-- Primary Visualization: Inflow vs Outflow Area Chart -->
-<div class="md:col-span-8 bg-surface-container-lowest rounded-xl p-7 flex flex-col relative overflow-hidden group hover:shadow-[0_32px_32px_rgba(4,22,39,0.04)] transition-shadow">
-<div class="flex justify-between items-start mb-10">
+<!-- Primary Visualization: Monthly cash movement — Inflow vs Outflow -->
+<div class="md:col-span-8 bg-surface-container-lowest rounded-xl p-7 flex flex-col relative overflow-visible group hover:shadow-[0_32px_32px_rgba(4,22,39,0.04)] transition-shadow z-0">
+<div class="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-4 mb-6">
 <div>
-<h3 class="text-headline-sm font-bold text-primary mb-1">Inflow vs Outflow</h3>
-<p id="cf-chart-subtitle" class="text-body-md text-on-surface-variant">Liquidity by month for the selected period</p>
+<h3 class="text-headline-sm font-bold text-primary mb-1">Monthly cash movement</h3>
+<p id="cf-chart-subtitle" class="text-body-md text-on-surface-variant">Inflow vs outflow by month (same ledger rules as the API)</p>
 </div>
-<div class="flex gap-4">
+<div class="flex flex-wrap gap-4 shrink-0">
 <div class="flex items-center gap-2">
-<span class="w-3 h-1 bg-secondary rounded-full"></span>
+<span class="w-3 h-1 bg-secondary rounded-full shrink-0"></span>
 <span class="text-label-sm font-semibold text-primary">Inflow</span>
 </div>
 <div class="flex items-center gap-2">
-<span class="w-3 h-1 bg-primary/20 rounded-full"></span>
+<span class="w-3 h-1 bg-primary/55 rounded-full shrink-0"></span>
 <span class="text-label-sm font-semibold text-primary">Outflow</span>
 </div>
 </div>
 </div>
-<!-- Chart (populated from API) -->
-<div class="relative h-[320px] w-full px-2 mb-4" id="cf-chart-wrap">
-<div class="absolute inset-0 flex flex-col justify-between pointer-events-none pt-2 pb-8">
-<div class="border-b border-outline-variant/10 w-full h-px"></div>
-<div class="border-b border-outline-variant/10 w-full h-px"></div>
-<div class="border-b border-outline-variant/10 w-full h-px"></div>
-<div class="border-b border-outline-variant/10 w-full h-px"></div>
+<!-- Chart: horizontal scroll when many months; overflow visible so bar tooltips are not clipped -->
+<div class="relative min-h-[300px] w-full overflow-x-auto overflow-y-visible pb-6 -mx-1 px-1" id="cf-chart-wrap">
+<div class="relative h-[300px] min-w-full flex flex-col">
+<div class="pointer-events-none absolute inset-x-0 top-0 bottom-10 flex flex-col justify-between pt-2">
+<div class="border-b border-outline-variant/20 w-full h-px"></div>
+<div class="border-b border-outline-variant/20 w-full h-px"></div>
+<div class="border-b border-outline-variant/20 w-full h-px"></div>
+<div class="border-b border-outline-variant/20 w-full h-px"></div>
 </div>
-<div id="cf-chart-container" class="relative h-full w-full flex items-end justify-center gap-1 pt-4 pb-8"></div>
+<div id="cf-chart-container" class="relative z-10 flex h-[260px] min-h-[200px] w-full min-w-[min(100%,520px)] items-end justify-start gap-1.5 px-1 pb-8 pt-2"></div>
+</div>
 </div>
 </div>
 <!-- Runway Card (Glassmorphism Warning) -->
@@ -246,6 +248,45 @@
 </div>
 <!-- Subtle Background Texture -->
 <div class="absolute -right-10 -bottom-10 w-48 h-48 bg-secondary opacity-20 blur-3xl"></div>
+</div>
+<!-- Monthly net (inflow − outflow) + Receivables vs Payables — same API payload -->
+<div class="md:col-span-12 grid grid-cols-1 lg:grid-cols-2 gap-8">
+<div class="bg-surface-container-lowest rounded-xl p-7 flex flex-col overflow-visible shadow-sm border border-outline-variant/10">
+<div class="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-3 mb-4">
+<div>
+<h3 class="text-headline-sm font-bold text-primary mb-1">Monthly net cash (P&amp;L)</h3>
+<p class="text-xs text-on-surface-variant">Per month: inflow minus outflow (signed). Green = net inflow, red = net outflow.</p>
+</div>
+<div class="flex flex-wrap gap-3 text-[10px] font-bold uppercase tracking-wide text-outline">
+<span class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-secondary"></span> Positive</span>
+<span class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-error"></span> Negative</span>
+</div>
+</div>
+<div class="overflow-x-auto overflow-y-visible pb-4 -mx-1 px-1" id="cf-netpl-wrap">
+<div id="cf-netpl-container" class="flex h-[220px] min-h-[180px] min-w-[min(100%,400px)] items-end justify-start gap-1.5 px-1 pb-6"></div>
+</div>
+</div>
+<div class="bg-surface-container-lowest rounded-xl p-7 flex flex-col justify-between overflow-visible shadow-sm border border-outline-variant/10">
+<div>
+<h3 class="text-headline-sm font-bold text-primary mb-1">Receivables vs payables</h3>
+<p class="text-xs text-on-surface-variant mb-6">Open-position totals (pending revenue vs pending expenses) from the same cash-flow response.</p>
+<div class="space-y-3">
+<div class="flex justify-between text-xs font-semibold text-on-surface-variant">
+<span>Receivables</span>
+<span id="cf-arap-ar-val" class="text-secondary">—</span>
+</div>
+<div class="h-3 w-full overflow-hidden rounded-full bg-surface-container-high flex">
+<div id="cf-arap-ar-bar" class="h-full bg-secondary transition-all duration-500 rounded-l-full" style="width:50%"></div>
+<div id="cf-arap-ap-bar" class="h-full bg-primary/55 transition-all duration-500 rounded-r-full" style="width:50%"></div>
+</div>
+<div class="flex justify-between text-xs font-semibold text-on-surface-variant">
+<span>Payables</span>
+<span id="cf-arap-ap-val" class="text-primary">—</span>
+</div>
+</div>
+</div>
+<p class="text-[10px] text-outline mt-4 leading-relaxed">Comparison bar width reflects each side’s share of combined open exposure (receivables + payables).</p>
+</div>
 </div>
 <!-- Working Capital Widgets: Receivables -->
 <div class="md:col-span-4 bg-surface-container-low rounded-xl p-7 flex flex-col justify-between group hover:bg-white transition-all">
@@ -281,10 +322,15 @@
 </a>
 </div>
 </div>
-<!-- Transaction Spotlight (Asymmetric) -->
-<div class="md:col-span-4 bg-surface-container-lowest rounded-xl p-7 flex flex-col shadow-sm">
-<h3 class="text-headline-sm font-bold text-primary mb-6">Liquidity Events</h3>
-<div id="cf-events-list" class="space-y-6">
+<!-- Open items + liquidity events (same liquidity_events array; split client-side for clarity) -->
+<div class="md:col-span-4 bg-surface-container-lowest rounded-xl p-7 flex flex-col shadow-sm min-h-[280px]">
+<h3 class="text-headline-sm font-bold text-primary mb-2">Open items</h3>
+<p class="text-xs text-on-surface-variant mb-4">Pending-settlement rows (PENDING) in the current period.</p>
+<div id="cf-open-items-list" class="space-y-3 mb-6 min-h-[3rem]">
+<p class="text-sm text-on-surface-variant">Loading…</p>
+</div>
+<h4 class="text-xs font-bold uppercase tracking-wider text-outline mb-3">Other liquidity events</h4>
+<div id="cf-events-list" class="space-y-4 flex-1">
 <p class="text-sm text-on-surface-variant">Loading events from your transactions…</p>
 </div>
 <a href="../data_entry_import/code.html" class="mt-8 w-full py-3 bg-surface-container-low text-primary text-sm font-bold rounded-lg hover:bg-surface-container-high transition-colors text-center block">

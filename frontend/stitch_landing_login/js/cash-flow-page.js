@@ -57,13 +57,21 @@
     return "28%";
   }
 
+  /** Safe for HTML attribute values (e.g. title="…"). */
+  function attrEscape(s) {
+    return String(s == null ? "" : s)
+      .replace(/&/g, "&amp;")
+      .replace(/"/g, "&quot;")
+      .replace(/</g, "&lt;");
+  }
+
   function renderChart(monthly) {
     var c = document.getElementById("cf-chart-container");
     if (!c) return;
     c.innerHTML = "";
     if (!monthly || monthly.length === 0) {
       c.innerHTML =
-        '<p class="text-sm text-outline m-auto">No transactions in this period for a month-wise chart.</p>';
+        '<p class="text-sm text-on-surface-variant self-center px-4 py-8">No month-wise cash movement in this range yet. Add or import dated transactions to see inflow vs outflow.</p>';
       return;
     }
 
@@ -73,39 +81,177 @@
     });
     if (maxVal === 0) maxVal = 1;
 
+    var barH = 200;
     monthly.forEach(function (m) {
       var infPct = ((m.inflow || 0) / maxVal) * 100;
       var outPct = ((m.outflow || 0) / maxVal) * 100;
+      var infH = Math.max(3, (infPct / 100) * barH);
+      var outH = Math.max(3, (outPct / 100) * barH);
+      var tip = attrEscape(fmt(m.inflow) + " in · " + fmt(m.outflow) + " out");
       var col = document.createElement("div");
-      col.className = "flex flex-col items-center gap-1 h-full justify-end flex-1 min-w-0 max-w-[4.5rem]";
+      col.className =
+        "flex flex-col items-center gap-1 justify-end shrink-0 min-w-[2.75rem] max-w-[4rem] h-full";
       col.innerHTML =
-        '<div class="flex items-end justify-center gap-0.5 w-full h-[240px]" title="' +
-        escapeHtml(fmt(m.inflow) + " in · " + fmt(m.outflow) + " out") +
+        '<div class="flex items-end justify-center gap-1 w-full" style="height:' +
+        barH +
+        'px" title="' +
+        tip +
         '">' +
-        '<div class="w-[42%] rounded-t-sm bg-secondary transition-all relative group" style="height:' +
-        Math.max(4, infPct) +
-        '%"><span class="hidden group-hover:block absolute -top-8 left-1/2 -translate-x-1/2 text-[9px] whitespace-nowrap bg-primary text-on-primary px-1 rounded">' +
-        escapeHtml(fmt(m.inflow)) +
-        "</span></div>" +
-        '<div class="w-[42%] rounded-t-sm bg-primary/25 transition-all relative group" style="height:' +
-        Math.max(4, outPct) +
-        '%"><span class="hidden group-hover:block absolute -top-8 left-1/2 -translate-x-1/2 text-[9px] whitespace-nowrap bg-primary text-on-primary px-1 rounded">' +
-        escapeHtml(fmt(m.outflow)) +
-        "</span></div>" +
+        '<div class="w-[46%] max-w-[18px] rounded-t-sm bg-secondary min-h-[3px] shadow-sm" style="height:' +
+        infH +
+        'px" title="' +
+        tip +
+        '"></div>' +
+        '<div class="w-[46%] max-w-[18px] rounded-t-sm bg-primary/55 min-h-[3px] shadow-sm" style="height:' +
+        outH +
+        'px" title="' +
+        tip +
+        '"></div>' +
         "</div>" +
-        '<span class="text-[10px] text-outline font-bold">' +
+        '<span class="text-[10px] font-bold text-on-surface-variant text-center leading-tight max-w-[4rem] truncate" title="' +
+        attrEscape(m.month || "") +
+        '">' +
         escapeHtml(m.month || "") +
         "</span>";
       c.appendChild(col);
     });
   }
 
+  function renderNetPlChart(monthly) {
+    var c = document.getElementById("cf-netpl-container");
+    if (!c) return;
+    c.innerHTML = "";
+    if (!monthly || monthly.length === 0) {
+      c.innerHTML =
+        '<p class="text-sm text-on-surface-variant self-center px-4 py-8">No monthly net cash to plot for this period.</p>';
+      return;
+    }
+
+    var maxAbs = 0;
+    monthly.forEach(function (m) {
+      maxAbs = Math.max(maxAbs, Math.abs(Number(m.net) || 0));
+    });
+    if (maxAbs === 0) maxAbs = 1;
+
+    var barH = 180;
+    monthly.forEach(function (m) {
+      var net = Number(m.net) || 0;
+      var pct = (Math.abs(net) / maxAbs) * 100;
+      var h = Math.max(4, (pct / 100) * barH);
+      var bg = net >= 0 ? "bg-secondary" : "bg-error";
+      var tip = attrEscape("Net " + fmt(net));
+      var col = document.createElement("div");
+      col.className =
+        "flex flex-col items-center gap-1 justify-end shrink-0 min-w-[2.75rem] max-w-[4rem] h-full";
+      col.innerHTML =
+        '<div class="flex items-end justify-center w-full" style="height:' +
+        barH +
+        'px">' +
+        '<div class="w-[55%] max-w-[22px] rounded-t-sm min-h-[4px] shadow-sm ' +
+        bg +
+        '" style="height:' +
+        h +
+        'px" title="' +
+        tip +
+        '"></div></div>' +
+        '<span class="text-[10px] font-bold text-on-surface-variant text-center leading-tight max-w-[4rem] truncate" title="' +
+        attrEscape(m.month || "") +
+        '">' +
+        escapeHtml(m.month || "") +
+        "</span>";
+      c.appendChild(col);
+    });
+  }
+
+  function renderArapComparison(ar, ap) {
+    var arv = Number((ar && ar.total) || 0);
+    var apv = Number((ap && ap.total) || 0);
+    var arEl = document.getElementById("cf-arap-ar-val");
+    var apEl = document.getElementById("cf-arap-ap-val");
+    var arBar = document.getElementById("cf-arap-ar-bar");
+    var apBar = document.getElementById("cf-arap-ap-bar");
+    if (arEl) arEl.textContent = fmt(arv);
+    if (apEl) apEl.textContent = fmt(apv);
+    var tot = arv + apv;
+    if (tot <= 0) {
+      if (arBar) {
+        arBar.style.width = "50%";
+        arBar.className =
+          "h-full bg-surface-container-high transition-all duration-500 rounded-l-full";
+      }
+      if (apBar) {
+        apBar.style.width = "50%";
+        apBar.className =
+          "h-full bg-surface-container-high transition-all duration-500 rounded-r-full";
+      }
+      return;
+    }
+    var arPct = (arv / tot) * 100;
+    var apPct = (apv / tot) * 100;
+    if (arBar) {
+      arBar.style.width = arPct + "%";
+      arBar.className = "h-full bg-secondary transition-all duration-500 rounded-l-full min-w-[4px]";
+    }
+    if (apBar) {
+      apBar.style.width = apPct + "%";
+      apBar.className =
+        "h-full bg-primary/55 transition-all duration-500 rounded-r-full min-w-[4px]";
+    }
+  }
+
+  function renderOpenItems(events) {
+    var el = document.getElementById("cf-open-items-list");
+    if (!el) return;
+    var pending = (events || []).filter(function (e) {
+      return String(e.status || "").toUpperCase() === "PENDING";
+    });
+    if (!pending.length) {
+      el.innerHTML =
+        '<p class="text-sm text-on-surface-variant">No open (PENDING) items in the current liquidity event set for this range.</p>';
+      return;
+    }
+    var icon =
+      '<div class="w-9 h-9 rounded-lg bg-secondary-container/40 flex items-center justify-center shrink-0">' +
+      '<span class="material-symbols-outlined text-secondary text-sm">pending_actions</span></div>';
+    el.innerHTML = pending
+      .map(function (ev) {
+        var isIn = ev.direction === "inflow";
+        var amtClass = isIn ? "text-secondary" : "text-error";
+        var sign = isIn ? "+" : "−";
+        var sub =
+          escapeHtml(ev.tag || "") +
+          " · " +
+          escapeHtml(ev.transaction_type || "") +
+          " · " +
+          escapeHtml(ev.date || "");
+        return (
+          '<div class="flex gap-3 items-start py-2 border-b border-outline-variant/10 last:border-0">' +
+          icon +
+          '<div class="flex-1 min-w-0"><p class="text-sm font-bold text-primary truncate">' +
+          escapeHtml(ev.title) +
+          '</p><p class="text-xs text-outline">' +
+          sub +
+          "</p></div>" +
+          '<p class="text-sm font-bold shrink-0 ' +
+          amtClass +
+          '">' +
+          sign +
+          fmt(ev.amount) +
+          "</p></div>"
+        );
+      })
+      .join("");
+  }
+
   function renderEvents(events) {
     var el = document.getElementById("cf-events-list");
     if (!el) return;
-    if (!events || events.length === 0) {
+    var rest = (events || []).filter(function (e) {
+      return String(e.status || "").toUpperCase() !== "PENDING";
+    });
+    if (!rest.length) {
       el.innerHTML =
-        '<p class="text-sm text-on-surface-variant">No notable liquidity events in this range. Add or import transactions to see large inflows, outflows, and pending items.</p>';
+        '<p class="text-sm text-on-surface-variant">No other notable events in this range (pending lines are listed under Open items). Add or import transactions to see large inflows and outflows.</p>';
       return;
     }
 
@@ -113,7 +259,7 @@
       '<div class="w-10 h-10 rounded-lg bg-surface-container-high flex items-center justify-center shrink-0">' +
       '<span class="material-symbols-outlined text-primary text-sm">payments</span></div>';
 
-    el.innerHTML = events
+    el.innerHTML = rest
       .map(function (ev) {
         var isIn = ev.direction === "inflow";
         var amtClass = isIn ? "text-secondary" : "text-error";
@@ -216,7 +362,10 @@
         "Overall ledger position (cumulative inflow − outflow): " + fmt(data.liquidity_position_proxy || 0);
     }
 
-    renderChart(data.monthly_liquidity || []);
+    var monthly = data.monthly_liquidity || [];
+    renderChart(monthly);
+    renderNetPlChart(monthly);
+    renderArapComparison(ar, ap);
 
     var rm = document.getElementById("cf-runway-months");
     var rc = document.getElementById("cf-runway-copy");
@@ -273,7 +422,9 @@
         " pending expense line(s) — mark CLEARED when paid.";
     if (apBd) apBd.textContent = (ap.count || 0) > 0 ? "DUE" : "CLEAR";
 
-    renderEvents(data.liquidity_events || []);
+    var evs = data.liquidity_events || [];
+    renderOpenItems(evs);
+    renderEvents(evs);
 
     var os = document.getElementById("cf-opt-summary");
     var ol = document.getElementById("cf-opt-strategies");

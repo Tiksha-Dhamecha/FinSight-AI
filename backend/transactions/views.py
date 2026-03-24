@@ -5,6 +5,7 @@ from rest_framework.response import Response
 
 from .analytics_service import build_analytics_for_user
 from .cash_flow_service import build_cash_flow_for_user
+from .reports_service import build_reports_for_user
 from .models import Transaction
 from .serializers import TransactionSerializer
 
@@ -30,6 +31,14 @@ class TransactionViewSet(viewsets.ModelViewSet):
         start_s = request.query_params.get("start_date")
         end_s = request.query_params.get("end_date")
         data = build_cash_flow_for_user(request.user, preset, start_s, end_s)
+        return Response(data)
+
+    @action(detail=False, methods=["get"], url_path="reports")
+    def reports(self, request):
+        preset = request.query_params.get("range", "last_6_months")
+        start_s = request.query_params.get("start_date")
+        end_s = request.query_params.get("end_date")
+        data = build_reports_for_user(request.user, preset, start_s, end_s)
         return Response(data)
 
     @action(detail=False, methods=["get"], url_path="operations")

@@ -107,6 +107,7 @@
 <script src="../js/config.js"></script>
 <script src="../js/auth.js"></script>
 <script src="../js/auth-guard.js"></script>
+<script src="../js/inr-format.js"></script>
 
 <!-- ===================== SIDE NAV ===================== -->
 <aside class="fixed left-0 top-0 h-full flex flex-col h-screen w-64 bg-slate-50 font-manrope antialiased z-50">
@@ -194,13 +195,20 @@
         <h2 class="text-5xl font-extrabold text-primary leading-tight">Operational Performance</h2>
         <p class="text-on-surface-variant text-sm mt-2" id="ops-period-label">Loading period…</p>
       </div>
-      <div class="flex gap-3 items-center">
+      <div class="flex flex-wrap gap-3 items-center justify-end">
         <!-- Range filter -->
         <select id="range-select" class="px-4 py-2 rounded-xl border border-outline-variant text-sm font-medium bg-surface-container-lowest text-primary focus:ring-1 focus:ring-primary">
           <option value="last_6_months">Last 6 Months</option>
           <option value="ytd">Year to Date</option>
+          <option value="custom">Custom Range</option>
         </select>
-        <button id="export-btn" class="px-6 py-3 bg-primary text-on-primary rounded-xl font-bold flex items-center gap-2 transition-all hover:shadow-xl shadow-primary/10">
+        <span id="ops-custom-range" class="hidden flex flex-wrap items-center gap-2">
+          <input type="date" id="ops-custom-start" class="text-xs rounded-lg border border-outline-variant px-2 py-2 bg-surface-container-lowest text-primary"/>
+          <span class="text-xs text-outline font-medium">to</span>
+          <input type="date" id="ops-custom-end" class="text-xs rounded-lg border border-outline-variant px-2 py-2 bg-surface-container-lowest text-primary"/>
+          <button type="button" id="ops-custom-apply" class="px-3 py-2 rounded-lg text-xs font-bold bg-primary text-on-primary">Apply</button>
+        </span>
+        <button type="button" id="export-btn" class="px-6 py-3 bg-primary text-on-primary rounded-xl font-bold flex items-center gap-2 transition-all hover:shadow-xl shadow-primary/10">
           <span class="material-symbols-outlined text-sm">download</span>
           Export Manifest
         </button>
@@ -300,7 +308,7 @@
         </div>
 
         <!-- Chart area -->
-        <div class="relative" style="height: 220px;">
+        <div id="velocity-chart-area" class="relative" style="height: 220px;">
           <!-- Horizontal grid lines -->
           <div class="absolute inset-0 flex flex-col justify-between pointer-events-none" style="top:0;bottom:24px;">
             <div class="border-t border-slate-100 w-full"></div>
@@ -396,235 +404,5 @@
   </div><!-- /content -->
 </main><!-- /main -->
 
-<!-- ===================== SCRIPT ===================== -->
-<script>
-(async function initOps() {
-  const token = localStorage.getItem("access_token");
-  if (!token) return;
-
-  const API = (window.FINSIGHT_API_ORIGIN || "http://127.0.0.1:8000");
-  const rangeEl = document.getElementById("range-select");
-
-  async function loadData(range) {
-    try {
-      const res = await fetch(`${API}/api/transactions/operations/?range=${range}`, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      if (!res.ok) throw new Error("API error " + res.status);
-      return await res.json();
-    } catch (e) {
-      console.error("Ops API error:", e);
-      return null;
-    }
-  }
-
-  function fmtGrowth(g) {
-    if (g > 0) return "+" + g + "%";
-    return g + "%";
-  }
-
-  function renderKPIs(d) {
-    // Orders completed
-    document.getElementById("kpi-orders-completed").textContent = d.orders_completed;
-    document.getElementById("kpi-completed-sub").textContent =
-      `${d.total_operational} total operations`;
-
-    // Orders rejected
-    document.getElementById("kpi-orders-rejected").textContent = d.orders_rejected;
-    const rejRate = d.total_operational > 0
-      ? ((d.orders_rejected / d.total_operational) * 100).toFixed(1)
-      : 0;
-    document.getElementById("kpi-rejected-sub").textContent = `${rejRate}% rejection rate`;
-
-    // Fulfillment efficiency
-    document.getElementById("kpi-fulfillment").textContent = d.fulfillment_efficiency + "%";
-    const effLabel = d.fulfillment_efficiency >= 90 ? "Strong" :
-                     d.fulfillment_efficiency >= 75 ? "Stable" :
-                     d.fulfillment_efficiency >= 60 ? "Weak" : "At Risk";
-    document.getElementById("kpi-fulfillment-sub").textContent = effLabel + " — " + d.late_fulfillment + " late";
-
-    // Growth rate
-    document.getElementById("kpi-growth").textContent = fmtGrowth(d.growth_rate);
-    const gSub = document.getElementById("kpi-growth-sub");
-    const isPos = d.growth_rate >= 0;
-    gSub.innerHTML = `<span class="material-symbols-outlined text-sm ${isPos ? 'text-secondary' : 'text-error'}">${isPos ? 'trending_up' : 'trending_down'}</span>
-                      <span class="${isPos ? 'text-secondary' : 'text-error'}">${isPos ? 'Positive' : 'Negative'} Trend</span>`;
-
-    // Period label
-    document.getElementById("ops-period-label").textContent =
-      `Period: ${d.period.start} → ${d.period.end}`;
-  }
-
-  function renderProcessingPanel(d) {
-    document.getElementById("kpi-proc-time").textContent = d.avg_processing_time_hours;
-    document.getElementById("kpi-late").textContent = d.late_fulfillment;
-    document.getElementById("kpi-eff-stat").textContent = d.fulfillment_efficiency + "%";
-
-    // Bars
-    const latePct = d.total_operational > 0
-      ? Math.min(100, (d.late_fulfillment / d.total_operational) * 100)
-      : 0;
-    document.getElementById("kpi-late-bar").style.width = latePct + "%";
-    document.getElementById("kpi-eff-bar").style.width = d.fulfillment_efficiency + "%";
-
-    // Trend text & pill
-    const trend = d.processing_time_trend;
-    const trendMap = {
-      improvement: { text: `Processing time improved to ${d.avg_processing_time_hours}h (was ${d.prior_avg_processing_time_hours}h). Pipeline is getting faster.`, icon: "trending_down", label: "Improving", cls: "bg-secondary text-on-secondary" },
-      decline:     { text: `Processing time increased to ${d.avg_processing_time_hours}h (was ${d.prior_avg_processing_time_hours}h). Review pipeline bottlenecks.`, icon: "trending_up", label: "Slower", cls: "bg-error text-on-error" },
-      stable:      { text: `Processing time is stable at ${d.avg_processing_time_hours}h vs ${d.prior_avg_processing_time_hours}h prior period.`, icon: "trending_flat", label: "Stable", cls: "bg-primary-container text-on-primary-container" },
-    };
-    const t = trendMap[trend] || trendMap.stable;
-    document.getElementById("kpi-proc-trend-text").textContent = t.text;
-    document.getElementById("kpi-proc-trend-pill").innerHTML =
-      `<span class="material-symbols-outlined text-sm">${t.icon}</span> ${t.label}`;
-    document.getElementById("kpi-proc-trend-pill").className =
-      `inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-bold mb-6 ${t.cls}`;
-  }
-
-  function renderChart(d) {
-    const chartEl = document.getElementById("velocity-chart");
-    const labelsEl = document.getElementById("velocity-labels");
-    const emptyEl  = document.getElementById("chart-empty");
-
-    const totalVol = d.velocity_graph.reduce((s, x) => s + x.volume, 0);
-    const totalRev = d.velocity_graph.reduce((s, x) => s + x.revenue, 0);
-
-    if (totalVol === 0 && totalRev === 0) {
-      chartEl.parentElement.style.display = "none";
-      labelsEl.style.display = "none";
-      emptyEl.classList.remove("hidden");
-      return;
-    }
-
-    emptyEl.classList.add("hidden");
-
-    const maxVol = Math.max(...d.velocity_graph.map(x => x.volume), 1);
-    const maxRev = Math.max(...d.velocity_graph.map(x => x.revenue), 1);
-
-    // Mini formatter for revenue tooltip
-    function fmtRev(v) {
-      if (v >= 1000000) return "₹" + (v/1000000).toFixed(1) + "M";
-      if (v >= 1000)    return "₹" + (v/1000).toFixed(1) + "K";
-      return "₹" + v.toFixed(0);
-    }
-
-    chartEl.innerHTML = "";
-    labelsEl.innerHTML = "";
-
-    d.velocity_graph.forEach(day => {
-      const revPct = Math.max(2, (day.revenue / maxRev) * 100);
-      const volPct = Math.max(2, (day.volume  / maxVol)  * 100);
-
-      // Bar group
-      const group = document.createElement("div");
-      group.className = "bar-group flex flex-col items-center flex-1";
-      group.style.height = "100%";
-      group.title = `${day.day} — Vol: ${day.volume} | Rev: ${fmtRev(day.revenue)}`;
-
-      group.innerHTML = `
-        <div class="flex items-end justify-center gap-1 w-full" style="height:100%">
-          <div class="chart-bar rounded-t-md w-4" style="height:${revPct}%; background: rgba(4,22,39,0.75);" title="Revenue: ${fmtRev(day.revenue)}"></div>
-          <div class="chart-bar rounded-t-md w-4" style="height:${volPct}%; background: rgba(0,109,61,0.75);" title="Volume: ${day.volume}"></div>
-        </div>
-      `;
-      chartEl.appendChild(group);
-
-      // Label
-      const lbl = document.createElement("div");
-      lbl.className = "flex-1 text-center text-[10px] text-slate-400 font-bold leading-6";
-      lbl.textContent = day.day;
-      labelsEl.appendChild(lbl);
-    });
-  }
-
-  function renderStrategy(d) {
-    const strat = d.strategy;
-    const grid  = document.getElementById("strategy-grid");
-    const badge = document.getElementById("strategy-badge");
-    const dot   = document.getElementById("strategy-dot");
-    const label = document.getElementById("strategy-status-label");
-    const pulse = document.getElementById("strategy-pulse");
-    const sumEl = document.getElementById("strategy-summary");
-
-    // Status colours
-    const statusMap = {
-      "Optimal":        { dot: "#006d3d", badge: "bg-secondary-container text-on-secondary-container", pulse: "#006d3d" },
-      "Efficient":      { dot: "#006d3d", badge: "bg-secondary-container text-on-secondary-container", pulse: "#006d3d" },
-      "Stable":         { dot: "#b88900", badge: "bg-tertiary-fixed text-on-tertiary-container",        pulse: "#b88900" },
-      "Needs Attention":{ dot: "#b88900", badge: "bg-tertiary-fixed text-on-tertiary-container",        pulse: "#b88900" },
-      "At Risk":        { dot: "#ba1a1a", badge: "bg-error-container text-on-error-container",          pulse: "#ba1a1a" },
-      "No Data":        { dot: "#74777d", badge: "bg-surface-container text-on-surface-variant",        pulse: "#74777d" },
-    };
-    const sc = statusMap[strat.status] || statusMap["Stable"];
-
-    dot.style.background   = sc.dot;
-    badge.className        = `flex items-center gap-2 px-4 py-2 rounded-full text-sm font-bold ${sc.badge}`;
-    pulse.style.background = sc.pulse;
-    label.textContent      = strat.status;
-    sumEl.textContent      = strat.summary;
-
-    const isHealthy = strat.status === "Optimal" || strat.status === "Efficient";
-
-    if (!strat.recommendations || strat.recommendations.length === 0) {
-      grid.innerHTML = `<div class="col-span-2 text-center py-8 text-on-surface-variant text-sm">No specific recommendations at this time.</div>`;
-      return;
-    }
-
-    grid.innerHTML = "";
-    strat.recommendations.forEach((rec, idx) => {
-      const icon  = isHealthy ? "check_circle" : (idx === 0 ? "priority_high" : "info");
-      const icCls = isHealthy
-        ? "bg-secondary-container text-on-secondary-container"
-        : (idx === 0 ? "bg-error-container text-on-error-container" : "bg-tertiary-fixed text-on-tertiary-container");
-
-      const card = document.createElement("div");
-      card.className = "flex gap-4 p-5 bg-surface-container-low rounded-xl";
-      card.innerHTML = `
-        <div class="w-11 h-11 rounded-xl ${icCls} flex items-center justify-center flex-shrink-0">
-          <span class="material-symbols-outlined text-sm" style="font-variation-settings:'FILL' 1;">${icon}</span>
-        </div>
-        <div>
-          <h4 class="font-bold text-primary text-sm mb-1">${isHealthy ? 'Optimisation Tip' : 'Action Required'}</h4>
-          <p class="text-xs text-on-surface-variant leading-relaxed">${rec}</p>
-        </div>
-      `;
-      grid.appendChild(card);
-    });
-  }
-
-  async function refresh() {
-    const range = rangeEl.value;
-    const data  = await loadData(range);
-    if (!data) {
-      document.getElementById("kpi-orders-completed").textContent = "—";
-      document.getElementById("kpi-orders-rejected").textContent  = "—";
-      document.getElementById("kpi-fulfillment").textContent       = "—";
-      document.getElementById("kpi-growth").textContent            = "—";
-      document.getElementById("strategy-summary").textContent      = "Could not load data. Check backend connection.";
-      return;
-    }
-    renderKPIs(data);
-    renderProcessingPanel(data);
-    renderChart(data);
-    renderStrategy(data);
-
-    // Set nav user name from JWT if available
-    try {
-      const payload = JSON.parse(atob(token.split(".")[1]));
-      const name = payload.username || payload.email || "User";
-      document.getElementById("nav-user-name").textContent = name;
-    } catch (_) {}
-  }
-
-  // Export button — simple window.print() manifest
-  document.getElementById("export-btn").addEventListener("click", () => window.print());
-
-  // Range change
-  rangeEl.addEventListener("change", refresh);
-
-  // Initial load
-  await refresh();
-})();
-</script>
+<script src="../js/operations-page.js"></script>
 </body></html>

@@ -1,21 +1,19 @@
 """
-Operational Performance service.
-Derives all KPIs from stored Transaction records (manual + CSV import).
-No fake data — all metrics are computed from the actual dataset.
+Operational Performance from stored Transaction rows (manual + CSV).
+Uses the same date presets as analytics (last_6_months, ytd, custom).
+Maps ledger fields to operational KPIs without schema changes.
 """
 from __future__ import annotations
 
-from datetime import date, timedelta
+from datetime import datetime, time
 from decimal import Decimal
 
+from django.conf import settings
 from django.utils import timezone
 
+from .analytics_service import prior_window, resolve_date_range, revenue_component
 from .models import Transaction
 
-
-# ---------------------------------------------------------------------------
-# Helpers
-# ---------------------------------------------------------------------------
 
 def _parse_amount(val) -> Decimal:
     if val is None:
@@ -31,107 +29,72 @@ def _safe_status(t: Transaction) -> str:
 
 
 def _safe_type(t: Transaction) -> str:
-    return (t.transaction_type or "").strip().title()
+    return (t.transaction_type or "").strip()
 
 
-def _safe_notes(t: Transaction) -> str:
-    return (t.notes or "").lower()
+def _blob(t: Transaction) -> str:
+    return f"{t.notes or ''} {t.category or ''} {t.entity_name or ''}".lower()
 
 
-def _safe_category(t: Transaction) -> str:
-    return (t.category or "").lower()
+COMPLETED_STATUSES = frozenset(
+    {"CLEARED", "COMPLETED", "SUCCESS", "DONE", "FULFILLED", "PAID", "SETTLED"}
+)
+REJECTED_STATUSES = frozenset(
+    {"FAILED", "REJECTED", "CANCELLED", "CANCELED", "DENIED", "REFUNDED", "VOIDED", "DECLINED"}
+)
+
+REJECT_KEYWORDS = (
+    "reject",
+    "rejected",
+    "cancel",
+    "cancelled",
+    "canceled",
+    "refund",
+    "void",
+    "chargeback",
+    "failed",
+    "denied",
+    "rto",
+    "return",
+)
 
 
-# ---------------------------------------------------------------------------
-# Date range helpers (mirrors analytics_service logic)
-# ---------------------------------------------------------------------------
-
-def _resolve_date_range(preset: str, start_s: str | None, end_s: str | None) -> tuple[date, date]:
-    today = timezone.now().date()
-    preset = (preset or "last_6_months").strip().lower()
-
-    if preset == "ytd":
-        return date(today.year, 1, 1), today
-
-    if preset == "custom" and start_s and end_s:
-        try:
-            y1, m1, d1 = (int(x) for x in start_s.split("-"))
-            y2, m2, d2 = (int(x) for x in end_s.split("-"))
-            start = date(y1, m1, d1)
-            end = date(y2, m2, d2)
-            if start > end:
-                start, end = end, start
-            return start, end
-        except (ValueError, TypeError):
-            pass
-
-    # default: last 6 calendar months
-    end = today
-    y, m = end.year, end.month
-    m -= 5
-    while m < 1:
-        m += 12
-        y -= 1
-    start = date(y, m, 1)
-    return start, end
-
-
-def _prior_window(start: date, end: date) -> tuple[date, date]:
-    days = (end - start).days + 1
-    prior_end = start - timedelta(days=1)
-    prior_start = prior_end - timedelta(days=days - 1)
-    return prior_start, prior_end
-
-
-# ---------------------------------------------------------------------------
-# Operational classification helpers
-# ---------------------------------------------------------------------------
-
-COMPLETED_STATUSES = {"CLEARED", "COMPLETED", "SUCCESS", "DONE", "FULFILLED", "PAID"}
-REJECTED_STATUSES = {"FAILED", "REJECTED", "CANCELLED", "DENIED", "REFUNDED", "VOIDED"}
-PENDING_STATUSES = {"PENDING", "PROCESSING", "ON_HOLD"}
-
-REVENUE_TYPES = {"Revenue", "Income", "Sale"}
-
-
-def _is_operational(t: Transaction) -> bool:
-    """Return True if this transaction counts as an operational record."""
-    t_type = _safe_type(t)
-    notes = _safe_notes(t)
-    cat = _safe_category(t)
-    # Revenue entries are always operational
-    if t_type in REVENUE_TYPES:
+def _is_rejected_row(t: Transaction) -> bool:
+    if _safe_status(t) in REJECTED_STATUSES:
         return True
-    # Expense entries that refer to orders/operations
-    if any(kw in notes for kw in ("order", "sale", "fulfil", "fulfill", "shipment", "delivery")):
-        return True
-    if any(kw in cat for kw in ("order", "sale", "operation")):
-        return True
-    return False
+    b = _blob(t)
+    return any(k in b for k in REJECT_KEYWORDS)
+
+
+def _counts_for_ops_row(t: Transaction) -> bool:
+    """Revenue/Expense lines drive order-like ops; transfers excluded from order counts."""
+    typ = _safe_type(t)
+    return typ in ("Revenue", "Expense")
 
 
 def _processing_hours(t: Transaction) -> float:
     """
-    Estimate processing time in hours.
-    Uses abs(created_at.date - transaction date) * 24.
-    Caps at 48 h for bulk-imported historical records (diff > 30 days),
-    uses 8 h minimum when same-day to avoid zero values.
+    Proxy for processing time: hours from start-of transaction date to created_at.
+    Same calendar day → small positive floor; long gaps capped (e.g. bulk import).
     """
     try:
-        diff_days = abs((t.created_at.date() - t.date).days)
+        if settings.USE_TZ:
+            start = timezone.make_aware(datetime.combine(t.date, time.min))
+        else:
+            start = datetime.combine(t.date, time.min)
+        created = t.created_at
+        if timezone.is_naive(created) and settings.USE_TZ:
+            created = timezone.make_aware(created)
+        delta = created - start
+        hrs = max(0.0, delta.total_seconds() / 3600.0)
+        if hrs < 1.0:
+            return 1.0
+        if hrs > 24 * 45:
+            return 24.0
+        return float(min(hrs, 24.0 * 14))
     except Exception:
         return 8.0
 
-    if diff_days == 0:
-        return 8.0  # same-day processing baseline
-    if diff_days > 30:
-        return 24.0  # bulk-imported historical; cap at 1 day
-    return float(diff_days) * 24.0
-
-
-# ---------------------------------------------------------------------------
-# Core builder
-# ---------------------------------------------------------------------------
 
 def build_operations_for_user(
     user,
@@ -140,96 +103,73 @@ def build_operations_for_user(
     end_s: str | None,
 ) -> dict:
     today = timezone.now().date()
-    start, end = _resolve_date_range(preset, start_s, end_s)
-    prior_start, prior_end = _prior_window(start, end)
+    start, end = resolve_date_range(preset, start_s, end_s)
+    prior_start, prior_end = prior_window(start, end)
 
-    qs_period = list(Transaction.objects.filter(user=user, date__gte=start, date__lte=end))
-
-    # Smart fallback: if no records in the requested window, use the actual dataset range
-    if not qs_period:
-        from django.db.models import Min, Max
-        agg = Transaction.objects.filter(user=user).aggregate(
-            min_date=Min('date'), max_date=Max('date')
+    qs_period = list(
+        Transaction.objects.filter(user=user, date__gte=start, date__lte=end).order_by("date", "id")
+    )
+    qs_prior = list(
+        Transaction.objects.filter(user=user, date__gte=prior_start, date__lte=prior_end).order_by(
+            "date", "id"
         )
-        if agg['min_date'] and agg['max_date']:
-            start = agg['min_date']
-            end   = agg['max_date']
-            prior_start, prior_end = _prior_window(start, end)
-            qs_period = list(Transaction.objects.filter(user=user, date__gte=start, date__lte=end))
+    )
 
-    qs_prior = list(Transaction.objects.filter(user=user, date__gte=prior_start, date__lte=prior_end))
-
-    # ------------------------------------------------------------------
-    # Current-period metrics
-    # ------------------------------------------------------------------
-    orders_completed = 0
-    orders_rejected = 0
-    orders_pending_overdue = 0   # PENDING but date is in the past → late
-    late_fulfillment = 0
-    total_operational = 0
-
-    proc_times: list[float] = []
-
-    # Weekday buckets: 0=Mon … 6=Sun
+    # Weekday: Mon=0 … Sun=6 — volume = all rows; revenue = Revenue component per weekday
     volume_by_day: dict[int, int] = {i: 0 for i in range(7)}
     revenue_by_day: dict[int, float] = {i: 0.0 for i in range(7)}
 
+    orders_completed = 0
+    orders_rejected = 0
+    late_fulfillment = 0
+    total_operational = 0
+    proc_times: list[float] = []
+
     for t in qs_period:
-        if not _is_operational(t):
+        wd = t.date.weekday()
+        volume_by_day[wd] += 1
+
+        rev_amt = revenue_component(t)
+        if rev_amt > 0:
+            revenue_by_day[wd] += float(rev_amt)
+
+        if not _counts_for_ops_row(t):
             continue
 
         total_operational += 1
-        status = _safe_status(t)
-        t_type = _safe_type(t)
+        st = _safe_status(t)
+        typ = _safe_type(t)
         amt = _parse_amount(t.amount)
-        weekday = t.date.weekday()  # 0=Mon
 
-        # Volume always counted for operational records
-        volume_by_day[weekday] += 1
-
-        # Revenue velocity: only positive revenue-type records
-        if t_type in REVENUE_TYPES and amt > 0:
-            revenue_by_day[weekday] += float(amt)
-
-        # Completion / rejection classification
-        if status in COMPLETED_STATUSES:
-            orders_completed += 1
-            proc_times.append(_processing_hours(t))
-
-            # Late fulfillment: only flag if explicitly noted in text.
-            # We deliberately do NOT use created_at vs date diff for completed orders
-            # because bulk-imported historical records have created_at = import date,
-            # which would falsely mark every historical record as "late".
-            if "late" in _safe_notes(t):
+        if typ == "Revenue" and amt > 0:
+            if st in COMPLETED_STATUSES:
+                orders_completed += 1
+                proc_times.append(_processing_hours(t))
+                if "late" in _blob(t):
+                    late_fulfillment += 1
+            elif _is_rejected_row(t):
+                orders_rejected += 1
+            elif st == "PENDING" and t.date < today:
                 late_fulfillment += 1
 
-        elif status in REJECTED_STATUSES:
-            orders_rejected += 1
+        elif typ == "Expense":
+            if _is_rejected_row(t) or st in REJECTED_STATUSES:
+                orders_rejected += 1
 
-        elif status in PENDING_STATUSES and t.date < today:
-            # Overdue pending (genuinely late — still open past due date)
-            orders_pending_overdue += 1
-            late_fulfillment += 1
-
-    # ------------------------------------------------------------------
-    # Prior-period metrics (for trend calculations)
-    # ------------------------------------------------------------------
-    prior_completed = 0
+    # Prior period — same rules for growth / processing trend
     prior_total_operational = 0
     prior_proc_times: list[float] = []
 
     for t in qs_prior:
-        if not _is_operational(t):
+        if not _counts_for_ops_row(t):
             continue
         prior_total_operational += 1
-        status = _safe_status(t)
-        if status in COMPLETED_STATUSES:
-            prior_completed += 1
+        typ = _safe_type(t)
+        amt = _parse_amount(t.amount)
+        st = _safe_status(t)
+        if typ == "Revenue" and amt > 0 and st in COMPLETED_STATUSES:
             prior_proc_times.append(_processing_hours(t))
 
-    # ------------------------------------------------------------------
-    # Growth rate (operational volume)
-    # ------------------------------------------------------------------
     if prior_total_operational > 0:
         growth_rate = round(
             ((total_operational - prior_total_operational) / prior_total_operational) * 100, 1
@@ -237,21 +177,15 @@ def build_operations_for_user(
     else:
         growth_rate = 100.0 if total_operational > 0 else 0.0
 
-    # ------------------------------------------------------------------
-    # Fulfillment efficiency
-    # ------------------------------------------------------------------
-    total_fulfilled = orders_completed  # only cleared records count as fulfilled
+    total_fulfilled = orders_completed
     on_time = max(0, orders_completed - late_fulfillment)
     if total_fulfilled > 0:
         fulfillment_efficiency = round((on_time / total_fulfilled) * 100, 1)
     elif total_operational == 0:
         fulfillment_efficiency = 0.0
     else:
-        fulfillment_efficiency = 100.0  # no fulfilled yet, no late either
+        fulfillment_efficiency = 100.0
 
-    # ------------------------------------------------------------------
-    # Average processing time
-    # ------------------------------------------------------------------
     avg_proc = round(sum(proc_times) / len(proc_times), 1) if proc_times else 0.0
     prior_avg_proc = round(sum(prior_proc_times) / len(prior_proc_times), 1) if prior_proc_times else 0.0
 
@@ -264,9 +198,6 @@ def build_operations_for_user(
     else:
         proc_trend = "stable"
 
-    # ------------------------------------------------------------------
-    # Volume vs Revenue velocity graph (Mon → Sun)
-    # ------------------------------------------------------------------
     day_names = ["MON", "TUE", "WED", "THU", "FRI", "SAT", "SUN"]
     velocity_graph = [
         {
@@ -277,9 +208,6 @@ def build_operations_for_user(
         for i in range(7)
     ]
 
-    # ------------------------------------------------------------------
-    # Strategy Intelligence Engine
-    # ------------------------------------------------------------------
     rejection_rate = (orders_rejected / total_operational * 100) if total_operational > 0 else 0.0
     late_pct = (late_fulfillment / total_operational * 100) if total_operational > 0 else 0.0
 
@@ -289,111 +217,123 @@ def build_operations_for_user(
     if rejection_rate > 15:
         issues.append("high_rejection")
         recommendations.append(
-            f"Rejection rate is {rejection_rate:.1f}%. Review root causes: validation failures, "
-            "supplier issues, or customer mismatch. Implement pre-submission checks to reduce failures."
+            f"Rejection or cancellation signals affect {rejection_rate:.1f}% of operational lines. "
+            "Review statuses, categories, and notes on failed/cancelled flows."
         )
     elif rejection_rate > 5:
         issues.append("moderate_rejection")
         recommendations.append(
-            f"Rejection rate of {rejection_rate:.1f}% is above target. Audit recent rejections "
-            "and add process checkpoints to prevent repeat failures."
+            f"Rejection/cancellation rate is {rejection_rate:.1f}%. Audit recent flagged rows and "
+            "tighten upstream validation."
         )
 
     if late_pct > 20:
         issues.append("high_late")
         recommendations.append(
-            f"Late fulfillment is at {late_pct:.1f}%. Investigate bottlenecks in the fulfilment "
-            "pipeline. Consider SLA alerts and workload rebalancing across peak days."
+            f"Late or overdue items are about {late_pct:.1f}% of operational volume. "
+            "Clear pending revenue dated in the past or add SLA follow-ups."
         )
     elif late_pct > 10:
         issues.append("moderate_late")
         recommendations.append(
-            f"Late fulfillment at {late_pct:.1f}%. Review scheduling and capacity on high-volume "
-            "weekdays to improve on-time delivery."
+            f"Late/overdue share is {late_pct:.1f}%. Focus on oldest pending revenue lines first."
         )
 
-    if fulfillment_efficiency < 70:
+    if fulfillment_efficiency < 70 and orders_completed > 0:
         issues.append("low_efficiency")
         recommendations.append(
-            f"Fulfillment efficiency is critically low at {fulfillment_efficiency}%. Streamline "
-            "the processing pipeline and prioritise clearing the pending backlog."
+            f"On-time fulfillment is {fulfillment_efficiency}% of completed revenue lines. "
+            "Tag late deliveries in notes only when true to keep this metric accurate."
         )
-    elif fulfillment_efficiency < 85:
+    elif fulfillment_efficiency < 85 and orders_completed > 0:
         issues.append("weak_efficiency")
         recommendations.append(
-            f"Fulfillment efficiency at {fulfillment_efficiency}% is below target. "
-            "Focus on reducing late completions to push this above 90%."
+            f"Fulfillment efficiency is {fulfillment_efficiency}%. Reduce backlog of pending or late revenue rows."
         )
 
-    if proc_trend == "decline":
+    if proc_trend == "decline" and prior_avg_proc > 0:
         issues.append("slow_processing")
         recommendations.append(
-            f"Average processing time has increased to {avg_proc}h (was {prior_avg_proc}h). "
-            "Identify the slowest stages and automate or parallelise where possible."
+            f"Average processing proxy rose to {avg_proc}h from {prior_avg_proc}h. "
+            "Check data entry lag vs transaction dates."
         )
 
     if growth_rate < -10:
         issues.append("declining_growth")
         recommendations.append(
-            f"Operational volume dropped {abs(growth_rate):.1f}% vs the prior period. "
-            "Investigate demand-side causes and activate re-engagement or acquisition campaigns."
+            f"Operational line volume fell {abs(growth_rate):.1f}% vs the prior window. "
+            "Confirm imports and period filter."
         )
     elif growth_rate < 0:
         issues.append("weak_growth")
         recommendations.append(
-            "Volume is slightly down compared to the prior period. Monitor closely and "
-            "consider targeted outreach to stabilise operational load."
+            "Operational volume is slightly below the prior window—monitor for sustained decline."
         )
 
-    # Check revenue vs volume imbalance (high volume, low revenue)
     total_vol = sum(volume_by_day.values())
     total_rev = sum(revenue_by_day.values())
     if total_vol > 5 and total_rev == 0:
         issues.append("no_revenue")
         recommendations.append(
-            "Operational volume is recorded but no revenue is associated. Ensure revenue "
-            "transactions are properly categorised so velocity metrics reflect actual income."
+            "Weekday volume exists but no positive Revenue amounts in range—add revenue rows for velocity."
         )
 
-    # Determine status
     critical = {"high_rejection", "low_efficiency", "declining_growth"}
-    warning = {"moderate_rejection", "high_late", "weak_efficiency", "slow_processing", "weak_growth"}
+    warning = {
+        "moderate_rejection",
+        "high_late",
+        "weak_efficiency",
+        "slow_processing",
+        "weak_growth",
+        "no_revenue",
+    }
 
-    if any(i in critical for i in issues):
-        status_label = "At Risk"
-    elif any(i in warning for i in issues):
-        status_label = "Needs Attention"
-    elif issues:
-        status_label = "Stable"
-    else:
-        status_label = "Optimal"
-        recommendations.append(
-            "Operations are running at optimal efficiency. Consider documenting current "
-            "workflows as a baseline and exploring automation to sustain performance at scale."
-        )
-
-    # Summary note
-    trend_phrase = {
-        "improvement": "Processing times are improving.",
-        "decline": "Processing times are slowing down.",
-        "stable": "Processing times are stable.",
-    }[proc_trend]
-
-    if total_operational == 0:
-        summary = (
-            "No operational records found for this period. Add transactions or import data "
-            "to see performance metrics."
-        )
+    if total_operational == 0 and not qs_period:
         status_label = "No Data"
-    else:
         summary = (
-            f"{total_operational} operations recorded. "
-            f"{orders_completed} completed, {orders_rejected} rejected, "
-            f"{late_fulfillment} late. {trend_phrase}"
+            "No transactions in this period. Use Last 6 Months, YTD, or Custom range, or add/import data."
+        )
+        recommendations = []
+    elif total_operational == 0 and qs_period:
+        status_label = "No Data"
+        summary = "No Revenue/Expense operational lines in range (only transfers or empty types)."
+        recommendations = [
+            "Add Revenue and Expense transactions for the selected period to populate operational KPIs.",
+        ]
+    else:
+        if any(i in critical for i in issues):
+            status_label = "At Risk"
+        elif any(i in warning for i in issues):
+            status_label = "Needs Attention"
+        elif issues:
+            status_label = "Stable"
+        elif fulfillment_efficiency >= 90 and rejection_rate <= 3 and growth_rate >= 0:
+            status_label = "Optimal"
+            recommendations.append(
+                "Operations look efficient versus your ledger. Document this baseline and keep statuses current."
+            )
+        elif rejection_rate <= 5 and late_pct <= 10:
+            status_label = "Efficient"
+            recommendations.append(
+                "Key metrics are healthy. Continue reconciling PENDING revenue promptly."
+            )
+        else:
+            status_label = "Stable"
+
+        trend_phrase = {
+            "improvement": "Processing proxy is improving vs the prior period.",
+            "decline": "Processing proxy increased vs the prior period.",
+            "stable": "Processing proxy is stable vs the prior period.",
+        }[proc_trend]
+        summary = (
+            f"{total_operational} operational lines (Revenue/Expense). "
+            f"{orders_completed} revenue lines cleared, {orders_rejected} rejections/cancellations flagged, "
+            f"{late_fulfillment} late/overdue. {trend_phrase}"
         )
 
     return {
         "period": {"start": start.isoformat(), "end": end.isoformat()},
+        "range_preset": (preset or "last_6_months").strip().lower(),
         "orders_completed": orders_completed,
         "orders_rejected": orders_rejected,
         "late_fulfillment": late_fulfillment,
@@ -406,7 +346,7 @@ def build_operations_for_user(
         "velocity_graph": velocity_graph,
         "strategy": {
             "status": status_label,
-            "recommendations": recommendations,
+            "recommendations": recommendations[:8],
             "summary": summary,
         },
     }
