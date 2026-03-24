@@ -88,6 +88,9 @@
     </style>
 </head>
 <body class="bg-background font-body text-on-background selection:bg-secondary/30">
+<script src="../js/config.js"></script>
+<script src="../js/auth.js"></script>
+<script src="../js/auth-guard.js"></script>
 <!-- SideNavBar Shell -->
 <nav class="fixed left-0 top-0 h-full flex flex-col h-screen w-64 border-r-0 bg-slate-50 dark:bg-slate-900 font-manrope antialiased z-50">
 <div class="px-6 py-8">
@@ -167,10 +170,10 @@
 <p class="text-xs font-bold text-blue-950">Elena Richards</p>
 <p class="text-[10px] text-slate-500">Managing Director</p>
 </div>
-<div class="w-10 h-10 rounded-full bg-surface-container-high overflow-hidden cursor-pointer" onclick="window.location.href='../landing_login/code.html';">
+<div class="w-10 h-10 rounded-full bg-surface-container-high overflow-hidden cursor-pointer" onclick="FinSightAuth.logout().then(function(){ location.href='../landing_login/code.html'; });">
 <img alt="Elena Richards" class="w-full h-full object-cover" data-alt="professional portrait of a confident middle-aged businesswoman with a friendly expression in a modern office setting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDFCksU5san04YZDJAvHHWEnIQz4AZigTACiNSoCZ8Wm3SJHgoeye6nLC_s5XdsiRl09XS3INsuVNSstdteh24LMhmn9U4zX9iXpGV2dCgLMCJIvJhDEMLPGwCtwM3bERhVYepoe6mODGzEtW5oPVFvtPRjXE2qG7GX9mxryvX_nw39QiW70zDBHaV-KqFABknCq_GvrCa-9Njxhxpfi2157vz6dvkQ7wV4fEKpYpcA0uiYTSKEJWyiLWDzkIa5z1L4j7zGj-CnUZM"/>
 </div>
-<span class="material-symbols-outlined cursor-pointer hover:text-blue-800 transition-all ml-2" onclick="window.location.href='../landing_login/code.html';" title="Logout">logout</span>
+<span class="material-symbols-outlined cursor-pointer hover:text-blue-800 transition-all ml-2" onclick="FinSightAuth.logout().then(function(){ location.href='../landing_login/code.html'; });" title="Logout">logout</span>
 </div>
 </div>
 </header>
