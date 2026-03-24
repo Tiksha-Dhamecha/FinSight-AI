@@ -5,6 +5,7 @@
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
 <title>Data Entry &amp; Import | Financial Atelier</title>
 <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
@@ -168,15 +169,15 @@
 <h3 class="text-xl font-bold text-primary font-headline">New Record</h3>
 <span class="material-symbols-outlined text-outline-variant" data-icon="add_circle">add_circle</span>
 </div>
-<form class="space-y-6">
+<form id="manual-transaction-form" class="space-y-6">
 <div class="grid grid-cols-2 gap-4">
 <div class="space-y-2">
 <label class="block text-xs font-bold uppercase tracking-wider text-outline">Date</label>
-<input class="w-full bg-surface-container-low border-none rounded-lg p-3 text-sm focus:ring-2 focus:ring-primary/10" type="date"/>
+<input id="t-date" required class="w-full bg-surface-container-low border-none rounded-lg p-3 text-sm focus:ring-2 focus:ring-primary/10" type="date"/>
 </div>
 <div class="space-y-2">
 <label class="block text-xs font-bold uppercase tracking-wider text-outline">Type</label>
-<select class="w-full bg-surface-container-low border-none rounded-lg p-3 text-sm focus:ring-2 focus:ring-primary/10">
+<select id="t-type" required class="w-full bg-surface-container-low border-none rounded-lg p-3 text-sm focus:ring-2 focus:ring-primary/10">
 <option>Revenue</option>
 <option>Expense</option>
 <option>Transfer</option>
@@ -185,20 +186,20 @@
 </div>
 <div class="space-y-2">
 <label class="block text-xs font-bold uppercase tracking-wider text-outline">Entity Name</label>
-<input class="w-full bg-surface-container-low border-none rounded-lg p-3 text-sm focus:ring-2 focus:ring-primary/10" placeholder="e.g. Supplier A or Customer B" type="text"/>
+<input id="t-entity" required class="w-full bg-surface-container-low border-none rounded-lg p-3 text-sm focus:ring-2 focus:ring-primary/10" placeholder="e.g. Supplier A or Customer B" type="text"/>
 </div>
 <div class="space-y-2">
 <label class="block text-xs font-bold uppercase tracking-wider text-outline">Amount (USD)</label>
 <div class="relative">
 <span class="absolute left-4 top-1/2 -translate-y-1/2 text-outline-variant">$</span>
-<input class="w-full pl-8 bg-surface-container-low border-none rounded-lg p-3 text-sm focus:ring-2 focus:ring-primary/10" placeholder="0.00" type="number"/>
+<input id="t-amount" required step="0.01" class="w-full pl-8 bg-surface-container-low border-none rounded-lg p-3 text-sm focus:ring-2 focus:ring-primary/10" placeholder="0.00" type="number"/>
 </div>
 </div>
 <div class="space-y-2">
 <label class="block text-xs font-bold uppercase tracking-wider text-outline">Notes</label>
-<textarea class="w-full bg-surface-container-low border-none rounded-lg p-3 text-sm focus:ring-2 focus:ring-primary/10 resize-none" placeholder="Description of transaction..." rows="3"></textarea>
+<textarea id="t-notes" class="w-full bg-surface-container-low border-none rounded-lg p-3 text-sm focus:ring-2 focus:ring-primary/10 resize-none" placeholder="Description of transaction..." rows="3"></textarea>
 </div>
-<button class="w-full bg-gradient-to-r from-primary to-primary-container text-on-primary py-4 rounded-lg font-bold hover:opacity-90 transition-opacity flex items-center justify-center gap-2" type="button">
+<button id="t-submit" class="w-full bg-gradient-to-r from-primary to-primary-container text-on-primary py-4 rounded-lg font-bold hover:opacity-90 transition-opacity flex items-center justify-center gap-2" type="submit">
 <span class="material-symbols-outlined text-lg" data-icon="save">save</span>
                             Commit to Ledger
                         </button>
@@ -209,7 +210,8 @@
 <div class="relative z-10">
 <h3 class="text-xl font-bold font-headline mb-2">Automated Import</h3>
 <p class="text-on-primary-container text-sm mb-6">Drag and drop your CSV or Excel files here to sync with the framework.</p>
-<div class="border-2 border-dashed border-outline-variant/30 rounded-xl p-8 flex flex-col items-center justify-center bg-primary-container/50 hover:bg-primary-container transition-colors cursor-pointer group-hover:border-primary-fixed-dim/50">
+<input type="file" id="bulk-file-input" class="hidden" accept=".csv, .xlsx, .xls" />
+<div id="bulk-drop-zone" onclick="document.getElementById('bulk-file-input').click()" class="border-2 border-dashed border-outline-variant/30 rounded-xl p-8 flex flex-col items-center justify-center bg-primary-container/50 hover:bg-primary-container transition-colors cursor-pointer group-hover:border-primary-fixed-dim/50">
 <span class="material-symbols-outlined text-4xl mb-3 text-primary-fixed-dim" data-icon="cloud_upload">cloud_upload</span>
 <span class="text-sm font-medium">Select file to upload</span>
 <span class="text-[10px] uppercase tracking-tighter text-outline-variant mt-1">Maximum size 10MB</span>
@@ -265,7 +267,7 @@
 <th class="px-8 py-4 text-right">Amount</th>
 </tr>
 </thead>
-<tbody class="divide-y divide-surface-container">
+<tbody id="transactions-list" class="divide-y divide-surface-container">
 <!-- Row 1 -->
 <tr class="hover:bg-surface-container-low/50 transition-colors group">
 <td class="px-8 py-5">
@@ -274,7 +276,7 @@
 <span class="material-symbols-outlined" data-icon="arrow_outward">arrow_outward</span>
 </div>
 <div>
-<div class="font-bold text-sm">Supplier A</div>
+<div class="font-bold text-sm">Supplier A (Demo)</div>
 <div class="text-[10px] text-outline font-medium">Inv #0042 • Mar 14, 2024</div>
 </div>
 </div>
@@ -299,7 +301,7 @@
 <span class="material-symbols-outlined" data-icon="call_received">call_received</span>
 </div>
 <div>
-<div class="font-bold text-sm">Customer B Payment</div>
+<div class="font-bold text-sm">Customer B Payment (Demo)</div>
 <div class="text-[10px] text-outline font-medium">Transfer • Mar 12, 2024</div>
 </div>
 </div>
@@ -314,56 +316,6 @@
 </td>
 <td class="px-8 py-5 text-right font-headline font-bold text-secondary">
                                         +$12,500.00
-                                    </td>
-</tr>
-<!-- Row 3 -->
-<tr class="hover:bg-surface-container-low/50 transition-colors group">
-<td class="px-8 py-5">
-<div class="flex items-center gap-4">
-<div class="w-10 h-10 rounded-lg bg-surface-container flex items-center justify-center text-error group-hover:bg-error-container/20 transition-colors">
-<span class="material-symbols-outlined" data-icon="arrow_outward">arrow_outward</span>
-</div>
-<div>
-<div class="font-bold text-sm">Office Rent</div>
-<div class="text-[10px] text-outline font-medium">Recurring • Mar 01, 2024</div>
-</div>
-</div>
-</td>
-<td class="px-8 py-5">
-<span class="inline-flex items-center gap-1 bg-secondary-container text-on-secondary-container text-[10px] font-bold px-2 py-1 rounded-sm">
-                                            CLEARED
-                                        </span>
-</td>
-<td class="px-8 py-5">
-<div class="text-xs text-on-surface-variant">Fixed Costs</div>
-</td>
-<td class="px-8 py-5 text-right font-headline font-bold text-primary">
-                                        -$2,500.00
-                                    </td>
-</tr>
-<!-- Row 4 -->
-<tr class="hover:bg-surface-container-low/50 transition-colors group">
-<td class="px-8 py-5">
-<div class="flex items-center gap-4">
-<div class="w-10 h-10 rounded-lg bg-surface-container flex items-center justify-center text-error group-hover:bg-error-container/20 transition-colors">
-<span class="material-symbols-outlined" data-icon="arrow_outward">arrow_outward</span>
-</div>
-<div>
-<div class="font-bold text-sm">AWS Cloud Services</div>
-<div class="text-[10px] text-outline font-medium">Card • Feb 28, 2024</div>
-</div>
-</div>
-</td>
-<td class="px-8 py-5">
-<span class="inline-flex items-center gap-1 bg-secondary-container text-on-secondary-container text-[10px] font-bold px-2 py-1 rounded-sm">
-                                            CLEARED
-                                        </span>
-</td>
-<td class="px-8 py-5">
-<div class="text-xs text-on-surface-variant">Infrastructure</div>
-</td>
-<td class="px-8 py-5 text-right font-headline font-bold text-primary">
-                                        -$1,420.50
                                     </td>
 </tr>
 </tbody>
@@ -396,4 +348,176 @@
 </div>
 </main>
 <!-- Floating Action Button Suppression - Not rendered on this task-focused screen -->
+<script>
+    const API_BASE = window.FINSIGHT_API_ORIGIN || 'http://127.0.0.1:8001';
+    const ENDPOINT = `${API_BASE}/api/transactions/`;
+    let token = localStorage.getItem('token') || '';
+
+    const getHeaders = () => {
+        const headers = { 'Content-Type': 'application/json' };
+        if (token) headers['Authorization'] = `Token ${token}`;
+        return headers;
+    };
+
+    const tbody = document.getElementById('transactions-list');
+    const STATIC_ROWS_HTML = tbody.innerHTML; // Store the 2 demo rows
+
+    async function loadTransactions() {
+        try {
+            const res = await fetch(ENDPOINT, { headers: getHeaders() });
+            if (!res.ok) throw new Error('API failed');
+            const data = await res.json();
+            
+            if (!data || data.length === 0) {
+                tbody.innerHTML = STATIC_ROWS_HTML; // show static demo data if empty
+                return;
+            }
+
+            tbody.innerHTML = '';
+            data.forEach(t => {
+                const tr = document.createElement('tr');
+                tr.className = 'hover:bg-surface-container-low/50 transition-colors group';
+                
+                const amountVal = parseFloat(t.amount);
+                const isNegative = amountVal < 0 || t.transaction_type.toLowerCase() === 'expense';
+                
+                const amountClass = isNegative ? 'text-primary' : 'text-secondary';
+                const icon = isNegative ? 'arrow_outward' : 'call_received';
+                const iconColorClass = isNegative ? 'text-error group-hover:bg-error-container/20' : 'text-secondary group-hover:bg-secondary-container/20';
+                const formattedAmount = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(Math.abs(amountVal));
+                
+                tr.innerHTML = `
+                    <td class="px-8 py-5">
+                        <div class="flex items-center gap-4">
+                            <div class="w-10 h-10 rounded-lg bg-surface-container flex items-center justify-center transition-colors ${iconColorClass}">
+                                <span class="material-symbols-outlined">${icon}</span>
+                            </div>
+                            <div>
+                                <div class="font-bold text-sm">${t.entity_name}</div>
+                                <div class="text-[10px] text-outline font-medium">${t.transaction_type} • ${t.date}</div>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="px-8 py-5">
+                        <span class="inline-flex items-center gap-1 bg-surface-container text-on-surface-variant text-[10px] font-bold px-2 py-1 rounded-sm">
+                            ${(t.status || 'CLEARED').toUpperCase()}
+                        </span>
+                    </td>
+                    <td class="px-8 py-5">
+                        <div class="text-xs text-on-surface-variant">${t.category || 'Uncategorized'}</div>
+                    </td>
+                    <td class="px-8 py-5 text-right font-headline font-bold ${amountClass}">
+                        ${isNegative ? '-' : '+'}${formattedAmount}
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        } catch (err) {
+            console.error('Failed to connect to backend', err);
+            tbody.innerHTML = STATIC_ROWS_HTML; // fallback to demo
+        }
+    }
+
+    document.getElementById('manual-transaction-form').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
+        const payload = {
+            date: document.getElementById('t-date').value,
+            transaction_type: document.getElementById('t-type').value,
+            entity_name: document.getElementById('t-entity').value,
+            amount: parseFloat(document.getElementById('t-amount').value),
+            notes: document.getElementById('t-notes').value || ''
+        };
+        
+        if (payload.transaction_type.toLowerCase() === 'expense' && payload.amount > 0) {
+            payload.amount = -Math.abs(payload.amount);
+        }
+        
+        try {
+            const btn = document.getElementById('t-submit');
+            btn.innerHTML = 'Saving...';
+            btn.disabled = true;
+            
+            const res = await fetch(ENDPOINT, {
+                method: 'POST',
+                headers: getHeaders(),
+                body: JSON.stringify(payload)
+            });
+            
+            if (res.ok) {
+                alert('Transaction saved successfully!');
+                document.getElementById('manual-transaction-form').reset();
+                loadTransactions();
+            } else {
+                const errData = await res.json();
+                alert('Failed to save. Error: ' + JSON.stringify(errData));
+            }
+        } catch (e) {
+            alert('Failed to connect to backend.');
+        } finally {
+            const btn = document.getElementById('t-submit');
+            btn.innerHTML = '<span class="material-symbols-outlined text-lg" data-icon="save">save</span> Commit to Ledger';
+            btn.disabled = false;
+        }
+    });
+
+    document.getElementById('bulk-file-input').addEventListener('change', async (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        const reader = new FileReader();
+        reader.onload = async (event) => {
+            try {
+                const workbook = XLSX.read(event.target.result, { type: 'binary' });
+                const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
+                const rows = XLSX.utils.sheet_to_json(firstSheet);
+                
+                if (rows.length === 0) {
+                    alert('Excel file is empty.');
+                    return;
+                }
+                
+                const payload = rows.map(r => {
+                    let amount = parseFloat(r['Amount']) || parseFloat(r['amount']) || 0.0;
+                    let type = r['Type'] || r['type'] || (amount < 0 ? 'Expense' : 'Revenue');
+                    if (type.toLowerCase() === 'expense' && amount > 0) amount = -Math.abs(amount);
+                    
+                    // Simple Excel date parsing fallback
+                    let dateStr = typeof r['Date'] === 'number' 
+                        ? new Date((Math.round((r['Date'] - 25569)*86400))*1000).toISOString().split('T')[0] 
+                        : (r['Date'] || r['date'] || new Date().toISOString().split('T')[0]);
+
+                    return {
+                        date: dateStr,
+                        entity_name: r['Entity Name'] || r['Entity'] || r['Name'] || r['entity_name'] || 'Unknown',
+                        amount: amount,
+                        transaction_type: type,
+                        notes: r['Notes'] || r['notes'] || ''
+                    };
+                });
+                
+                const res = await fetch(`${ENDPOINT}bulk_import/`, {
+                    method: 'POST',
+                    headers: getHeaders(),
+                    body: JSON.stringify(payload)
+                });
+                
+                if (res.ok) {
+                    alert(`Successfully imported ${payload.length} records!`);
+                    loadTransactions();
+                } else {
+                    const errorData = await res.json();
+                    alert('Import failed: ' + JSON.stringify(errorData));
+                }
+            } catch (err) {
+                console.error(err);
+                alert('Invalid excel file mapping or parse error.');
+            }
+        };
+        reader.readAsBinaryString(file);
+    });
+
+    // Auto-load transactions on boot
+    window.addEventListener('DOMContentLoaded', loadTransactions);
+</script>
 </body></html>
