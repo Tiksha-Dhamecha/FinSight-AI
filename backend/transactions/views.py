@@ -1,28 +1,59 @@
-from rest_framework import viewsets, status
-from rest_framework.response import Response
+from rest_framework import status, viewsets
 from rest_framework.decorators import action
-from rest_framework.permissions import AllowAny
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
+
 from .models import Transaction
 from .serializers import TransactionSerializer
 
+
 class TransactionViewSet(viewsets.ModelViewSet):
     serializer_class = TransactionSerializer
-    permission_classes = [AllowAny]
+    permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
-        if self.request.user.is_authenticated:
-            return Transaction.objects.filter(user=self.request.user)
-        return Transaction.objects.all()
+        return Transaction.objects.filter(user=self.request.user)
 
-    @action(detail=False, methods=['post'])
+    @action(detail=False, methods=["post"])
     def bulk_import(self, request):
-        data = request.data
-        if not isinstance(data, list):
-            return Response({'error': 'Expected a list of items'}, status=status.HTTP_400_BAD_REQUEST)
+        """
+        Accepts a JSON array of transaction objects.
+        Creates valid rows; returns per-row errors for invalid rows (partial import).
+        """
+        rows = request.data
+        if not isinstance(rows, list):
+            return Response(
+                {"detail": "Request body must be a JSON array of transaction objects."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        if len(rows) == 0:
+            return Response(
+                {"detail": "No rows to import."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
 
-        serializer = self.get_serializer(data=data, many=True)
-        if serializer.is_valid():
-            serializer.save()
-            return Response({'message': f'Successfully imported {len(data)} transactions'}, status=status.HTTP_201_CREATED)
-        else:
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        created = []
+        errors = []
+        for index, row in enumerate(rows):
+            ser = TransactionSerializer(data=row, context={"request": request})
+            if ser.is_valid():
+                ser.save()
+                created.append(ser.data)
+            else:
+                errors.append({"row": index + 1, "data": row, "errors": ser.errors})
+
+        payload = {
+            "created_count": len(created),
+            "error_count": len(errors),
+            "created": created,
+            "errors": errors,
+            "message": (
+                f"Imported {len(created)} transaction(s)."
+                + (f" {len(errors)} row(s) skipped due to validation errors." if errors else "")
+            ),
+        }
+        if not created and errors:
+            return Response(payload, status=status.HTTP_400_BAD_REQUEST)
+        if created and errors:
+            return Response(payload, status=status.HTTP_200_OK)
+        return Response(payload, status=status.HTTP_201_CREATED)
