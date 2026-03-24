@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Financial Analytics &amp; Trends | Executive Insight</title>
+<!-- Fonts -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Manrope:wght@600;700;800&amp;display=swap" rel="stylesheet"/>
+<!-- Icons -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "secondary": "#006d3d",
+              "on-primary": "#ffffff",
+              "error": "#ba1a1a",
+              "surface-dim": "#d8dadd",
+              "primary-fixed": "#d2e4fb",
+              "secondary-container": "#97f3b5",
+              "inverse-surface": "#2d3133",
+              "on-secondary": "#ffffff",
+              "background": "#f7f9fc",
+              "outline": "#74777d",
+              "surface-bright": "#f7f9fc",
+              "on-primary-fixed": "#0b1d2d",
+              "on-primary-fixed-variant": "#38485a",
+              "on-secondary-fixed": "#00210f",
+              "on-tertiary-fixed": "#261a00",
+              "surface-container": "#eceef1",
+              "surface-container-high": "#e6e8eb",
+              "secondary-fixed": "#9af6b8",
+              "error-container": "#ffdad6",
+              "secondary-fixed-dim": "#7ed99e",
+              "on-tertiary-container": "#b88900",
+              "on-tertiary-fixed-variant": "#5c4300",
+              "tertiary-fixed": "#ffdfa0",
+              "primary": "#041627",
+              "on-secondary-container": "#047240",
+              "inverse-primary": "#b7c8de",
+              "on-primary-container": "#8192a7",
+              "on-secondary-fixed-variant": "#00522d",
+              "outline-variant": "#c4c6cd",
+              "surface": "#f7f9fc",
+              "on-surface-variant": "#44474c",
+              "surface-variant": "#e0e3e6",
+              "on-error-container": "#93000a",
+              "on-background": "#191c1e",
+              "on-surface": "#191c1e",
+              "primary-container": "#1a2b3c",
+              "inverse-on-surface": "#eff1f4",
+              "tertiary": "#1e1300",
+              "surface-container-lowest": "#ffffff",
+              "tertiary-fixed-dim": "#fbbc00",
+              "on-tertiary": "#ffffff",
+              "primary-fixed-dim": "#b7c8de",
+              "surface-container-low": "#f2f4f7",
+              "tertiary-container": "#372700",
+              "surface-container-highest": "#e0e3e6",
+              "surface-tint": "#4f6073",
+              "on-error": "#ffffff"
+            },
+            fontFamily: {
+              "headline": ["Manrope"],
+              "body": ["Inter"],
+              "label": ["Inter"]
+            },
+            borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .chart-gradient-revenue {
+            background: linear-gradient(180deg, rgba(0, 109, 61, 0.1) 0%, rgba(0, 109, 61, 0) 100%);
+        }
+    </style>
+</head>
+<body class="bg-background font-body text-on-background antialiased">
+<!-- SideNavBar Shell -->
+<aside class="fixed left-0 top-0 h-full flex flex-col h-screen w-64 border-r-0 bg-slate-50 dark:bg-slate-900 font-manrope antialiased z-50">
+<div class="px-8 py-10">
+<h1 class="text-xl font-bold text-blue-950 dark:text-blue-50">Executive Insight</h1>
+<p class="text-xs text-slate-500 font-medium mt-1">SME Health Framework</p>
+</div>
+<nav class="flex-1 px-4 space-y-1">
+<a class="flex items-center gap-3 px-4 py-3 text-slate-500 dark:text-slate-400 font-medium hover:bg-slate-200/50 dark:hover:bg-slate-800/80 transition-colors scale-95 duration-150 ease-in-out" href="../main_health_dashboard/code.html">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span>Dashboard</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-slate-500 dark:text-slate-400 font-medium hover:bg-slate-200/50 dark:hover:bg-slate-800/80 transition-colors scale-95 duration-150 ease-in-out" href="../data_entry_import/code.html">
+<span class="material-symbols-outlined" data-icon="receipt_long">receipt_long</span>
+<span>Transactions</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-blue-950 dark:text-blue-50 font-bold border-r-4 border-blue-950 dark:border-blue-400 hover:bg-slate-200/50 dark:hover:bg-slate-800/80 transition-colors scale-95 duration-150 ease-in-out" href="#">
+<span class="material-symbols-outlined" data-icon="insights">insights</span>
+<span>Analytics</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-slate-500 dark:text-slate-400 font-medium hover:bg-slate-200/50 dark:hover:bg-slate-800/80 transition-colors scale-95 duration-150 ease-in-out" href="../anomalies_recommendations/code.html">
+<span class="material-symbols-outlined" data-icon="warning">warning</span>
+<span>Anomalies</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-slate-500 dark:text-slate-400 font-medium hover:bg-slate-200/50 dark:hover:bg-slate-800/80 transition-colors scale-95 duration-150 ease-in-out" href="../cash_flow_liquidity/code.html">
+<span class="material-symbols-outlined" data-icon="account_balance_wallet">account_balance_wallet</span>
+<span>Cash Flow</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-slate-500 dark:text-slate-400 font-medium hover:bg-slate-200/50 dark:hover:bg-slate-800/80 transition-colors scale-95 duration-150 ease-in-out" href="../operational_performance/code.html">
+<span class="material-symbols-outlined" data-icon="precision_manufacturing">precision_manufacturing</span>
+<span>Operations</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-slate-500 dark:text-slate-400 font-medium hover:bg-slate-200/50 dark:hover:bg-slate-800/80 transition-colors scale-95 duration-150 ease-in-out" href="../financial_atelier_executive_dashboard/code.html">
+<span class="material-symbols-outlined" data-icon="assessment">assessment</span>
+<span>Reports</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-slate-500 dark:text-slate-400 font-medium hover:bg-slate-200/50 dark:hover:bg-slate-800/80 transition-colors scale-95 duration-150 ease-in-out" href="../business_setup_onboarding/code.html">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+<span>Settings</span>
+</a>
+</nav>
+<div class="p-8 mt-auto">
+<div class="flex items-center gap-3 p-3 bg-slate-100 dark:bg-slate-800/50 rounded-xl">
+<div class="w-10 h-10 rounded-lg overflow-hidden bg-primary-container flex items-center justify-center">
+<img alt="Business Logo" class="w-full h-full object-cover" data-alt="Corporate professional business logo with abstract geometric shape in navy and silver" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBmmg92EHd8vjwkYnC7iHZPPMBxRMIanVuQRIA8iqbIh7Oo7NEWDSRa02ZUlkNFWbZgzVQZ3fAHThUFO5U5jGOaatqNWmMg6UncOSay3fDJ682kZ97GHeywtZyS7dulAZPvhK_L0RN--_4syOYOx9fBQzltuUtDa3DBoxTTIKGLQhCNuXNeXY2oJc43cpSKPoZmHHzt3RgRD2-wO97boYf1LhL5FSBRjfMJpGW1k3cRT46GcFTrV_A8ISgw9SA5ZMLsVDm1n2YwTFg"/>
+</div>
+<div>
+<p class="text-sm font-bold text-blue-950 dark:text-blue-50">Financial Atelier</p>
+<p class="text-[10px] text-slate-500 font-bold uppercase tracking-widest">Enterprise</p>
+</div>
+</div>
+</div>
+</aside>
+<!-- TopNavBar Shell -->
+<header class="flex justify-between items-center w-full px-8 py-4 ml-64 max-w-[calc(100%-16rem)] docked full-width top-0 sticky bg-slate-50/80 dark:bg-slate-900/80 backdrop-blur-md z-40">
+<div class="flex items-center gap-6 flex-1">
+<div class="relative w-full max-w-md">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm" data-icon="search">search</span>
+<input class="w-full bg-slate-100 dark:bg-slate-800 border-none rounded-full py-2 pl-10 pr-4 text-sm focus:ring-2 focus:ring-primary/10 transition-all font-body" placeholder="Search insights or reports..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-5">
+<button class="material-symbols-outlined text-slate-500 hover:text-blue-800 dark:hover:text-blue-200 transition-all opacity-80 hover:opacity-100 cursor-pointer" data-icon="calendar_today">calendar_today</button>
+<button class="material-symbols-outlined text-slate-500 hover:text-blue-800 dark:hover:text-blue-200 transition-all opacity-80 hover:opacity-100 cursor-pointer" data-icon="notifications">notifications</button>
+<div class="w-px h-6 bg-slate-200 dark:bg-slate-700 mx-2"></div>
+<div class="flex items-center gap-3">
+<span class="text-sm font-semibold text-blue-950 dark:text-blue-100">Executive Director</span>
+<span class="material-symbols-outlined text-blue-950 dark:text-blue-100 text-3xl" data-icon="account_circle">account_circle</span>
+</div>
+</div>
+</header>
+<!-- Main Canvas -->
+<main class="ml-64 p-12 max-w-[1600px]">
+<!-- Hero Metrics -->
+<header class="mb-12 flex flex-col md:flex-row md:items-end justify-between gap-6">
+<div>
+<p class="text-on-secondary-container font-semibold tracking-wider text-xs uppercase mb-2">Financial Performance</p>
+<h2 class="font-headline font-extrabold text-5xl text-primary tracking-tight">Analytics &amp; Trends</h2>
+</div>
+<div class="flex items-center gap-4 bg-surface-container-low p-2 rounded-xl">
+<button class="px-6 py-2 bg-surface-container-lowest text-primary font-semibold rounded-lg shadow-sm text-sm">Last 6 Months</button>
+<button class="px-6 py-2 text-slate-500 hover:text-primary font-semibold text-sm transition-colors">YTD</button>
+<button class="px-6 py-2 text-slate-500 hover:text-primary font-semibold text-sm transition-colors">Custom Range</button>
+</div>
+</header>
+<!-- Bento Grid Layout -->
+<div class="grid grid-cols-12 gap-8">
+<!-- Revenue Area Chart (Bento Large) -->
+<section class="col-span-12 lg:col-span-8 bg-surface-container-lowest p-8 rounded-xl relative overflow-hidden">
+<div class="flex justify-between items-start mb-12">
+<div>
+<h3 class="font-headline text-2xl font-bold text-primary mb-1">Gross Revenue Trend</h3>
+<p class="text-on-surface-variant text-sm flex items-center gap-1">
+                            Steady growth observed over Q1-Q2
+                            <span class="text-secondary font-bold flex items-center ml-2">
+<span class="material-symbols-outlined text-xs" data-icon="trending_up">trending_up</span>
+                                +12.4% vs prev.
+                            </span>
+</p>
+</div>
+<div class="text-right">
+<span class="text-3xl font-headline font-extrabold text-primary">$492,800.00</span>
+<p class="text-[10px] text-outline font-bold uppercase tracking-widest">Total Period Revenue</p>
+</div>
+</div>
+<!-- Abstract Chart Visualization -->
+<div class="h-64 flex items-end gap-1 relative pt-8">
+<!-- Grid Lines (Editorial Look) -->
+<div class="absolute inset-x-0 bottom-0 h-full flex flex-col justify-between opacity-10">
+<div class="border-b border-outline-variant w-full"></div>
+<div class="border-b border-outline-variant w-full"></div>
+<div class="border-b border-outline-variant w-full"></div>
+<div class="border-b border-outline-variant w-full"></div>
+</div>
+<!-- Line Chart Representation -->
+<svg class="absolute inset-0 w-full h-full overflow-visible drop-shadow-xl" viewbox="0 0 800 200">
+<path d="M0,160 Q133,145 266,130 T532,80 T800,40" fill="none" stroke="#006d3d" stroke-width="3"></path>
+<path d="M0,160 Q133,145 266,130 T532,80 T800,40 V200 H0 Z" fill="url(#chart-grad)" opacity="0.1"></path>
+<defs>
+<lineargradient id="chart-grad" x1="0%" x2="0%" y1="0%" y2="100%">
+<stop offset="0%" style="stop-color:#006d3d;stop-opacity:1"></stop>
+<stop offset="100%" style="stop-color:#006d3d;stop-opacity:0"></stop>
+</lineargradient>
+</defs>
+<!-- Data Points -->
+<circle cx="0" cy="160" fill="#006d3d" r="4"></circle>
+<circle cx="266" cy="130" fill="#006d3d" r="4"></circle>
+<circle cx="532" cy="80" fill="#006d3d" r="4"></circle>
+<circle cx="800" cy="40" fill="#006d3d" r="6" stroke="white" stroke-width="2"></circle>
+</svg>
+<!-- Labels -->
+<div class="absolute bottom-[-24px] inset-x-0 flex justify-between text-[10px] font-bold text-outline uppercase tracking-wider">
+<span>Month 1</span>
+<span>Month 2</span>
+<span>Month 3</span>
+<span>Month 4</span>
+<span>Month 5</span>
+<span>Current</span>
+</div>
+</div>
+</section>
+<!-- Profit Bar Chart (Bento Sidebar) -->
+<section class="col-span-12 lg:col-span-4 bg-surface-container-low p-8 rounded-xl flex flex-col">
+<div class="mb-8">
+<h3 class="font-headline text-2xl font-bold text-primary mb-1">Monthly Profit</h3>
+<p class="text-on-surface-variant text-sm">Net margin performance</p>
+</div>
+<div class="flex-1 flex items-end justify-between gap-2 h-48 px-2">
+<!-- Bars -->
+<div class="flex flex-col items-center gap-2 group w-full">
+<div class="bg-primary w-full rounded-t-sm transition-all group-hover:bg-primary-container" style="height: 60%"></div>
+<span class="text-[10px] text-outline font-bold">M1</span>
+</div>
+<div class="flex flex-col items-center gap-2 group w-full">
+<div class="bg-primary w-full rounded-t-sm transition-all group-hover:bg-primary-container" style="height: 75%"></div>
+<span class="text-[10px] text-outline font-bold">M2</span>
+</div>
+<!-- Dip in Month 3 -->
+<div class="flex flex-col items-center gap-2 group w-full">
+<div class="bg-error/40 w-full rounded-t-sm transition-all group-hover:bg-error/60" style="height: 35%"></div>
+<span class="text-[10px] text-error font-bold">M3</span>
+</div>
+<div class="flex flex-col items-center gap-2 group w-full">
+<div class="bg-primary w-full rounded-t-sm transition-all group-hover:bg-primary-container" style="height: 65%"></div>
+<span class="text-[10px] text-outline font-bold">M4</span>
+</div>
+<div class="flex flex-col items-center gap-2 group w-full">
+<div class="bg-primary w-full rounded-t-sm transition-all group-hover:bg-primary-container" style="height: 85%"></div>
+<span class="text-[10px] text-outline font-bold">M5</span>
+</div>
+<div class="flex flex-col items-center gap-2 group w-full">
+<div class="bg-primary w-full rounded-t-sm transition-all group-hover:bg-primary-container" style="height: 95%"></div>
+<span class="text-[10px] text-outline font-bold">M6</span>
+</div>
+</div>
+<div class="mt-8 pt-6 border-t border-outline-variant/10">
+<div class="flex items-center justify-between mb-2">
+<span class="text-sm font-medium text-on-surface-variant">Average Profit Margin</span>
+<span class="text-sm font-bold text-primary">24.2%</span>
+</div>
+<div class="w-full bg-surface-container-highest h-1 rounded-full overflow-hidden">
+<div class="bg-secondary h-full" style="width: 24.2%"></div>
+</div>
+</div>
+</section>
+<!-- Expense Breakdown (Donut/Category) -->
+<section class="col-span-12 lg:col-span-5 bg-surface-container-low p-8 rounded-xl">
+<div class="flex justify-between items-center mb-10">
+<h3 class="font-headline text-2xl font-bold text-primary">Expense Allocation</h3>
+<span class="material-symbols-outlined text-outline cursor-pointer hover:text-primary transition-colors" data-icon="more_horiz">more_horiz</span>
+</div>
+<div class="flex flex-col sm:flex-row items-center gap-10">
+<!-- Visual Donut -->
+<div class="relative w-40 h-40">
+<svg class="w-full h-full -rotate-90" viewbox="0 0 100 100">
+<!-- Logistics - Heavy 45% -->
+<circle class="text-primary" cx="50" cy="50" fill="transparent" r="40" stroke="currentColor" stroke-dasharray="113.1 138.2" stroke-dashoffset="0" stroke-width="12"></circle>
+<!-- Marketing 25% -->
+<circle class="text-secondary" cx="50" cy="50" fill="transparent" r="40" stroke="currentColor" stroke-dasharray="62.8 188.5" stroke-dashoffset="-113.1" stroke-width="12"></circle>
+<!-- Payroll 20% -->
+<circle class="text-on-primary-container" cx="50" cy="50" fill="transparent" r="40" stroke="currentColor" stroke-dasharray="50.3 201.1" stroke-dashoffset="-175.9" stroke-width="12"></circle>
+<!-- Other 10% -->
+<circle class="text-outline-variant" cx="50" cy="50" fill="transparent" r="40" stroke="currentColor" stroke-dasharray="25.1 226.2" stroke-dashoffset="-226.2" stroke-width="12"></circle>
+</svg>
+<div class="absolute inset-0 flex flex-col items-center justify-center">
+<span class="text-xs font-bold text-outline uppercase">Total</span>
+<span class="text-lg font-extrabold text-primary">$182k</span>
+</div>
+</div>
+<!-- Legend -->
+<div class="flex-1 space-y-4 w-full">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="w-3 h-3 rounded-sm bg-primary"></span>
+<span class="text-sm font-semibold text-primary">Logistics</span>
+</div>
+<span class="text-sm font-bold">45%</span>
+</div>
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="w-3 h-3 rounded-sm bg-secondary"></span>
+<span class="text-sm font-semibold text-primary">Marketing</span>
+</div>
+<span class="text-sm font-bold">25%</span>
+</div>
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="w-3 h-3 rounded-sm bg-on-primary-container"></span>
+<span class="text-sm font-semibold text-primary">Payroll</span>
+</div>
+<span class="text-sm font-bold">20%</span>
+</div>
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="w-3 h-3 rounded-sm bg-outline-variant"></span>
+<span class="text-sm font-semibold text-primary">Other</span>
+</div>
+<span class="text-sm font-bold">10%</span>
+</div>
+</div>
+</div>
+</section>
+<!-- Anomalies & Comparisons (Editorial Stats) -->
+<section class="col-span-12 lg:col-span-7 grid grid-cols-1 md:grid-cols-2 gap-6">
+<!-- Insight 1 -->
+<div class="bg-surface-container-lowest p-6 rounded-xl border-l-4 border-error">
+<div class="flex items-center gap-3 mb-4">
+<div class="bg-error-container text-on-error-container p-2 rounded-lg">
+<span class="material-symbols-outlined" data-icon="priority_high">priority_high</span>
+</div>
+<h4 class="font-headline font-bold text-primary">Expense Anomaly</h4>
+</div>
+<p class="text-on-surface-variant text-sm mb-4 leading-relaxed">
+                        Logistics spending spiked by <span class="text-error font-bold">22%</span> in Month 3, primarily due to fuel surcharges and expedited shipping.
+                    </p>
+<a class="text-primary font-bold text-xs uppercase tracking-widest flex items-center gap-1 hover:gap-2 transition-all" href="#">
+                        View Detail <span class="material-symbols-outlined text-sm" data-icon="chevron_right">chevron_right</span>
+</a>
+</div>
+<!-- Insight 2 -->
+<div class="bg-surface-container-lowest p-6 rounded-xl border-l-4 border-secondary">
+<div class="flex items-center gap-3 mb-4">
+<div class="bg-secondary-container text-on-secondary-container p-2 rounded-lg">
+<span class="material-symbols-outlined" data-icon="auto_awesome">auto_awesome</span>
+</div>
+<h4 class="font-headline font-bold text-primary">Efficiency Score</h4>
+</div>
+<p class="text-on-surface-variant text-sm mb-4 leading-relaxed">
+                        Revenue per employee has improved by <span class="text-secondary font-bold">$1.2k</span> as automation tools reduced manual processing time.
+                    </p>
+<a class="text-primary font-bold text-xs uppercase tracking-widest flex items-center gap-1 hover:gap-2 transition-all" href="#">
+                        Optimize Further <span class="material-symbols-outlined text-sm" data-icon="chevron_right">chevron_right</span>
+</a>
+</div>
+<!-- Summary Metric 1 -->
+<div class="bg-primary p-6 rounded-xl text-on-primary">
+<p class="text-[10px] font-bold uppercase tracking-[0.2em] opacity-60 mb-2">Net Cash Flow</p>
+<div class="flex items-end justify-between">
+<span class="text-3xl font-headline font-extrabold">$84,320</span>
+<span class="text-secondary-fixed text-sm font-bold">+5.2%</span>
+</div>
+</div>
+<!-- Summary Metric 2 -->
+<div class="bg-surface-container-lowest p-6 rounded-xl shadow-sm">
+<p class="text-[10px] text-outline font-bold uppercase tracking-[0.2em] mb-2">Customer Acquisition Cost</p>
+<div class="flex items-end justify-between">
+<span class="text-3xl font-headline font-extrabold text-primary">$42.00</span>
+<span class="text-error text-sm font-bold">-2.1%</span>
+</div>
+</div>
+</section>
+</div>
+<!-- Footer / Action Area -->
+<footer class="mt-16 flex items-center justify-between border-t border-outline-variant/10 pt-8">
+<div class="flex items-center gap-4">
+<div class="flex -space-x-3">
+<img alt="User 1" class="w-8 h-8 rounded-full border-2 border-background object-cover" data-alt="Portrait of a smiling male financial analyst in professional office setting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBX-R6uMOK_lNG3ZJo7L3FEKWswfEn-X2LFnl19hnMhciyIH8Tk_UXopV6R5Z5h8su4EYWy2L2rsXkMiurzzq8bnU3puQwH8ZMfooiRL7QeDnsKdqtkltvht5afrv3XcTV984IOPVtDcFa-8MG0pNHDlP6MNIXwOc_ghKx-86_ySL2aBfEFRNQ8cGMaaGLsSjHfb1WnXGV4ZLG_Svyk2EoXGYsevP9uH5XQ87d6Ao0mG605G7zJiTQbGNi6Z332Ns5hmYrJRDDY4X4"/>
+<img alt="User 2" class="w-8 h-8 rounded-full border-2 border-background object-cover" data-alt="Portrait of a female entrepreneur looking confident in an airy modern studio" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAaokn--2I9XdSSPueMSbtve2OclM5xmQPNmVkxkRGtCdnsGzIM78nSoq4Sl09x-XfGrdv6vsraWdSTy4Ev2gpPzs1QBVL73nokdtKYVfJuC4dTWdkcQ5iFNbgC3feeZGZTLGJ3vOT4DeLnUIdGQikgeyq0mfiaNuMMX1LUuAsA0axJtz-W8_h3Xf8nbYjznM0wEA-whrTKoS8rBYtMr0rToXa8Kk1pUE3awnxtaHjNM2j0UlwcRW2gtsLVKVwGK3AW4UkjkedgXIk"/>
+<div class="w-8 h-8 rounded-full border-2 border-background bg-surface-container-highest flex items-center justify-center text-[10px] font-bold text-primary">+4</div>
+</div>
+<p class="text-xs text-on-surface-variant">4 Analysts and 2 Directors are viewing this report</p>
+</div>
+<div class="flex gap-3">
+<button class="px-6 py-2.5 bg-surface-container-highest text-primary font-bold text-sm rounded-lg hover:bg-outline-variant transition-colors">Export PDF</button>
+<button class="px-6 py-2.5 bg-primary text-on-primary font-bold text-sm rounded-lg shadow-lg hover:opacity-90 transition-all flex items-center gap-2">
+<span class="material-symbols-outlined text-sm" data-icon="share">share</span>
+                    Share Insight
+                </button>
+</div>
+</footer>
+</main>
+<!-- Floating Action Button (FAB) - Contextual -->
+<button class="fixed bottom-8 right-8 w-14 h-14 bg-primary text-on-primary rounded-xl shadow-2xl flex items-center justify-center hover:scale-105 transition-transform z-50">
+<span class="material-symbols-outlined" data-icon="add_chart" style="font-variation-settings: 'FILL' 1;">add_chart</span>
+</button>
+</body></html>

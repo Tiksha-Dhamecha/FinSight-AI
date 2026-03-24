@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Operational Performance | Executive Insight</title>
+<!-- Fonts -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Manrope:wght@600;700;800&amp;display=swap" rel="stylesheet"/>
+<!-- Icons -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "secondary": "#006d3d",
+              "on-primary": "#ffffff",
+              "error": "#ba1a1a",
+              "surface-dim": "#d8dadd",
+              "primary-fixed": "#d2e4fb",
+              "secondary-container": "#97f3b5",
+              "inverse-surface": "#2d3133",
+              "on-secondary": "#ffffff",
+              "background": "#f7f9fc",
+              "outline": "#74777d",
+              "surface-bright": "#f7f9fc",
+              "on-primary-fixed": "#0b1d2d",
+              "on-primary-fixed-variant": "#38485a",
+              "on-secondary-fixed": "#00210f",
+              "on-tertiary-fixed": "#261a00",
+              "surface-container": "#eceef1",
+              "surface-container-high": "#e6e8eb",
+              "secondary-fixed": "#9af6b8",
+              "error-container": "#ffdad6",
+              "secondary-fixed-dim": "#7ed99e",
+              "on-tertiary-container": "#b88900",
+              "on-tertiary-fixed-variant": "#5c4300",
+              "tertiary-fixed": "#ffdfa0",
+              "primary": "#041627",
+              "on-secondary-container": "#047240",
+              "inverse-primary": "#b7c8de",
+              "on-primary-container": "#8192a7",
+              "on-secondary-fixed-variant": "#00522d",
+              "outline-variant": "#c4c6cd",
+              "surface": "#f7f9fc",
+              "on-surface-variant": "#44474c",
+              "surface-variant": "#e0e3e6",
+              "on-error-container": "#93000a",
+              "on-background": "#191c1e",
+              "on-surface": "#191c1e",
+              "primary-container": "#1a2b3c",
+              "inverse-on-surface": "#eff1f4",
+              "tertiary": "#1e1300",
+              "surface-container-lowest": "#ffffff",
+              "tertiary-fixed-dim": "#fbbc00",
+              "on-tertiary": "#ffffff",
+              "primary-fixed-dim": "#b7c8de",
+              "surface-container-low": "#f2f4f7",
+              "tertiary-container": "#372700",
+              "surface-container-highest": "#e0e3e6",
+              "surface-tint": "#4f6073",
+              "on-error": "#ffffff"
+            },
+            fontFamily: {
+              "headline": ["Manrope"],
+              "body": ["Inter"],
+              "label": ["Inter"]
+            },
+            borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body { font-family: 'Inter', sans-serif; }
+        h1, h2, h3, .display-font { font-family: 'Manrope', sans-serif; }
+    </style>
+</head>
+<body class="bg-background text-on-background min-h-screen">
+<!-- SideNavBar Shell -->
+<aside class="fixed left-0 top-0 h-full flex flex-col h-screen w-64 bg-slate-50 font-manrope antialiased z-50">
+<div class="px-6 py-8">
+<div class="flex items-center gap-3 mb-10">
+<div class="w-8 h-8 bg-primary rounded-lg flex items-center justify-center text-on-primary">
+<span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">insights</span>
+</div>
+<h1 class="text-xl font-bold text-blue-950">Executive Insight</h1>
+</div>
+<nav class="space-y-1">
+<a class="flex items-center gap-3 px-3 py-2 text-slate-500 font-medium hover:bg-slate-200/50 transition-colors rounded-lg group" href="../main_health_dashboard/code.html">
+<span class="material-symbols-outlined text-xl">dashboard</span>
+                    Dashboard
+                </a>
+<a class="flex items-center gap-3 px-3 py-2 text-slate-500 font-medium hover:bg-slate-200/50 transition-colors rounded-lg group" href="../data_entry_import/code.html">
+<span class="material-symbols-outlined text-xl">receipt_long</span>
+                    Transactions
+                </a>
+<a class="flex items-center gap-3 px-3 py-2 text-slate-500 font-medium hover:bg-slate-200/50 transition-colors rounded-lg group" href="../financial_analytics_trends/code.html">
+<span class="material-symbols-outlined text-xl">insights</span>
+                    Analytics
+                </a>
+<a class="flex items-center gap-3 px-3 py-2 text-slate-500 font-medium hover:bg-slate-200/50 transition-colors rounded-lg group" href="../anomalies_recommendations/code.html">
+<span class="material-symbols-outlined text-xl">warning</span>
+                    Anomalies
+                </a>
+<a class="flex items-center gap-3 px-3 py-2 text-slate-500 font-medium hover:bg-slate-200/50 transition-colors rounded-lg group" href="../cash_flow_liquidity/code.html">
+<span class="material-symbols-outlined text-xl">account_balance_wallet</span>
+                    Cash Flow
+                </a>
+<!-- Active Item -->
+<a class="flex items-center gap-3 px-3 py-2 text-blue-950 font-bold border-r-4 border-blue-950 transition-colors rounded-l-lg bg-slate-100/50" href="#">
+<span class="material-symbols-outlined text-xl" style="font-variation-settings: 'FILL' 1;">precision_manufacturing</span>
+                    Operations
+                </a>
+<a class="flex items-center gap-3 px-3 py-2 text-slate-500 font-medium hover:bg-slate-200/50 transition-colors rounded-lg group" href="../financial_atelier_executive_dashboard/code.html">
+<span class="material-symbols-outlined text-xl">assessment</span>
+                    Reports
+                </a>
+<a class="flex items-center gap-3 px-3 py-2 text-slate-500 font-medium hover:bg-slate-200/50 transition-colors rounded-lg group" href="../business_setup_onboarding/code.html">
+<span class="material-symbols-outlined text-xl">settings</span>
+                    Settings
+                </a>
+</nav>
+</div>
+<div class="mt-auto p-6">
+<div class="bg-surface-container rounded-xl p-4 flex items-center gap-3">
+<div class="w-10 h-10 rounded-full bg-primary-container flex items-center justify-center text-on-primary-container">
+<img alt="Business Logo" class="w-10 h-10 rounded-full object-cover" data-alt="professional headshot of a business executive in a modern office with soft natural lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBoGILgSyV3JfSreAKQclvgh8m9lCO5qRj9NiacmG7UTSl1WlNn46smBl9xFl80YX1XvvyOM-xCf8YS0Dv3O9bdNcxkybofGBB1xDAKWqtkv1HuQTHwelmA3Bwc1kb6vcfat6OxvVSKqcaUdS85xVJKaon5-fo3uDtMmnrtjdV09YNB-mWhi87yANl2SfAYbXiVdV9qOF0qgJNw_KqCUmkhvnjM02d29p56q1-NUtM1SjswfSZHyezAdGsCXmC5l5CkJ93cYqUEsHk"/>
+</div>
+<div>
+<p class="text-sm font-bold text-blue-950">Atelier Admin</p>
+<p class="text-xs text-slate-500">SME Framework</p>
+</div>
+</div>
+</div>
+</aside>
+<!-- Main Canvas -->
+<main class="ml-64 min-h-screen">
+<!-- TopNavBar Shell -->
+<header class="sticky top-0 z-40 flex justify-between items-center w-full px-8 py-4 bg-slate-50/80 backdrop-blur-md font-manrope tracking-tight">
+<div class="flex items-center gap-6">
+<span class="text-lg font-extrabold text-blue-950">Financial Atelier</span>
+<div class="relative">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm">search</span>
+<input class="pl-10 pr-4 py-2 bg-surface-container-low rounded-full border-0 text-sm focus:ring-1 focus:ring-primary w-64 transition-all" placeholder="Search operations..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-5">
+<button class="opacity-80 hover:opacity-100 cursor-pointer transition-all">
+<span class="material-symbols-outlined text-blue-950">calendar_today</span>
+</button>
+<button class="opacity-80 hover:opacity-100 cursor-pointer transition-all relative">
+<span class="material-symbols-outlined text-blue-950">notifications</span>
+<span class="absolute top-0 right-0 w-2 h-2 bg-error rounded-full border-2 border-slate-50"></span>
+</button>
+<button class="opacity-80 hover:opacity-100 cursor-pointer transition-all">
+<span class="material-symbols-outlined text-blue-950">account_circle</span>
+</button>
+</div>
+</header>
+<!-- Content Area -->
+<div class="p-10 max-w-7xl mx-auto space-y-10">
+<!-- Hero Header Section -->
+<section class="flex flex-col md:flex-row justify-between items-end gap-6">
+<div>
+<p class="text-sm font-bold uppercase tracking-widest text-on-primary-container mb-2">Internal Diagnostics</p>
+<h2 class="text-5xl font-extrabold text-primary leading-tight">Operational Performance</h2>
+</div>
+<div class="flex gap-3">
+<button class="px-6 py-3 bg-primary text-on-primary rounded-xl font-bold flex items-center gap-2 transition-all hover:shadow-xl shadow-primary/10">
+<span class="material-symbols-outlined text-sm">download</span>
+                        Export Manifest
+                    </button>
+</div>
+</section>
+<!-- Top Row: Core Metrics Bento -->
+<section class="grid grid-cols-1 md:grid-cols-4 gap-6">
+<!-- Orders Completed -->
+<div class="bg-surface-container-lowest p-8 rounded-xl relative overflow-hidden group">
+<div class="relative z-10">
+<p class="text-on-surface-variant font-medium text-sm mb-4">Orders Completed</p>
+<h3 class="text-4xl font-extrabold text-primary mb-2">512</h3>
+<div class="flex items-center gap-1 text-secondary font-bold text-sm">
+<span class="material-symbols-outlined text-sm">trending_up</span>
+                            +8.4%
+                        </div>
+</div>
+<div class="absolute -bottom-4 -right-4 opacity-5 group-hover:opacity-10 transition-opacity">
+<span class="material-symbols-outlined text-[120px]">shopping_cart</span>
+</div>
+</div>
+<!-- Repeat Customer Rate -->
+<div class="bg-surface-container-lowest p-8 rounded-xl relative overflow-hidden group">
+<div class="relative z-10">
+<p class="text-on-surface-variant font-medium text-sm mb-4">Repeat Rate</p>
+<h3 class="text-4xl font-extrabold text-primary mb-2">65.2%</h3>
+<div class="flex items-center gap-1 text-secondary font-bold text-sm">
+<span class="material-symbols-outlined text-sm">verified</span>
+                            Healthy Ret.
+                        </div>
+</div>
+<div class="absolute -bottom-4 -right-4 opacity-5 group-hover:opacity-10 transition-opacity">
+<span class="material-symbols-outlined text-[120px]">person_check</span>
+</div>
+</div>
+<!-- Fulfillment Efficiency -->
+<div class="bg-surface-container-lowest p-8 rounded-xl relative overflow-hidden group">
+<div class="relative z-10">
+<p class="text-on-surface-variant font-medium text-sm mb-4">Fulfillment</p>
+<h3 class="text-4xl font-extrabold text-primary mb-2">92.0%</h3>
+<div class="flex items-center gap-1 text-on-tertiary-container font-bold text-sm">
+<span class="material-symbols-outlined text-sm">timer</span>
+                            On Schedule
+                        </div>
+</div>
+<div class="absolute -bottom-4 -right-4 opacity-5 group-hover:opacity-10 transition-opacity">
+<span class="material-symbols-outlined text-[120px]">package_2</span>
+</div>
+</div>
+<!-- Customer Growth -->
+<div class="bg-surface-container-lowest p-8 rounded-xl relative overflow-hidden group">
+<div class="relative z-10">
+<p class="text-on-surface-variant font-medium text-sm mb-4">Growth Rate</p>
+<h3 class="text-4xl font-extrabold text-primary mb-2">+12%</h3>
+<div class="flex items-center gap-1 text-secondary font-bold text-sm">
+<span class="material-symbols-outlined text-sm">group_add</span>
+                            142 New
+                        </div>
+</div>
+<div class="absolute -bottom-4 -right-4 opacity-5 group-hover:opacity-10 transition-opacity">
+<span class="material-symbols-outlined text-[120px]">query_stats</span>
+</div>
+</div>
+</section>
+<!-- Middle Section: Detailed Analysis -->
+<section class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+<!-- Operational vs Financial Correlation (2/3 width) -->
+<div class="lg:col-span-2 bg-surface-container-lowest p-10 rounded-xl relative">
+<div class="flex justify-between items-start mb-12">
+<div>
+<h3 class="text-2xl font-bold text-primary mb-2">Volume vs. Revenue Velocity</h3>
+<p class="text-on-surface-variant text-sm max-w-md">Correlating total fulfillment volume with gross revenue peaks to identify bandwidth bottlenecks.</p>
+</div>
+<div class="flex items-center gap-4 text-xs font-bold uppercase tracking-wider">
+<div class="flex items-center gap-2">
+<span class="w-3 h-3 rounded-full bg-primary"></span>
+                                Revenue
+                            </div>
+<div class="flex items-center gap-2">
+<span class="w-3 h-3 rounded-full bg-secondary"></span>
+                                Orders
+                            </div>
+</div>
+</div>
+<!-- Simplified Elegant Chart Visualization -->
+<div class="h-64 flex items-end justify-between gap-4 relative">
+<!-- Background Grid Lines (Subtle) -->
+<div class="absolute inset-0 flex flex-col justify-between pointer-events-none">
+<div class="border-t border-outline-variant/10 w-full h-px"></div>
+<div class="border-t border-outline-variant/10 w-full h-px"></div>
+<div class="border-t border-outline-variant/10 w-full h-px"></div>
+<div class="border-t border-outline-variant/10 w-full h-px"></div>
+</div>
+<!-- Mock Chart Bars/Lines -->
+<div class="flex flex-col items-center gap-2 flex-1 group">
+<div class="w-full flex justify-center gap-1 items-end h-full">
+<div class="w-4 bg-primary/20 rounded-t-sm h-[40%] group-hover:bg-primary transition-all"></div>
+<div class="w-4 bg-secondary/20 rounded-t-sm h-[60%] group-hover:bg-secondary transition-all"></div>
+</div>
+<span class="text-[10px] text-slate-400 font-bold">MON</span>
+</div>
+<div class="flex flex-col items-center gap-2 flex-1 group">
+<div class="w-full flex justify-center gap-1 items-end h-full">
+<div class="w-4 bg-primary/20 rounded-t-sm h-[55%] group-hover:bg-primary transition-all"></div>
+<div class="w-4 bg-secondary/20 rounded-t-sm h-[45%] group-hover:bg-secondary transition-all"></div>
+</div>
+<span class="text-[10px] text-slate-400 font-bold">TUE</span>
+</div>
+<div class="flex flex-col items-center gap-2 flex-1 group">
+<div class="w-full flex justify-center gap-1 items-end h-full">
+<div class="w-4 bg-primary/20 rounded-t-sm h-[75%] group-hover:bg-primary transition-all"></div>
+<div class="w-4 bg-secondary/20 rounded-t-sm h-[90%] group-hover:bg-secondary transition-all"></div>
+</div>
+<span class="text-[10px] text-slate-400 font-bold">WED</span>
+</div>
+<div class="flex flex-col items-center gap-2 flex-1 group">
+<div class="w-full flex justify-center gap-1 items-end h-full">
+<div class="w-4 bg-primary/20 rounded-t-sm h-[85%] group-hover:bg-primary transition-all"></div>
+<div class="w-4 bg-secondary/20 rounded-t-sm h-[70%] group-hover:bg-secondary transition-all"></div>
+</div>
+<span class="text-[10px] text-slate-400 font-bold">THU</span>
+</div>
+<div class="flex flex-col items-center gap-2 flex-1 group">
+<div class="w-full flex justify-center gap-1 items-end h-full">
+<div class="w-4 bg-primary/20 rounded-t-sm h-[60%] group-hover:bg-primary transition-all"></div>
+<div class="w-4 bg-secondary/20 rounded-t-sm h-[80%] group-hover:bg-secondary transition-all"></div>
+</div>
+<span class="text-[10px] text-slate-400 font-bold">FRI</span>
+</div>
+<div class="flex flex-col items-center gap-2 flex-1 group">
+<div class="w-full flex justify-center gap-1 items-end h-full">
+<div class="w-4 bg-primary/20 rounded-t-sm h-[30%] group-hover:bg-primary transition-all"></div>
+<div class="w-4 bg-secondary/20 rounded-t-sm h-[20%] group-hover:bg-secondary transition-all"></div>
+</div>
+<span class="text-[10px] text-slate-400 font-bold">SAT</span>
+</div>
+<div class="flex flex-col items-center gap-2 flex-1 group">
+<div class="w-full flex justify-center gap-1 items-end h-full">
+<div class="w-4 bg-primary/20 rounded-t-sm h-[25%] group-hover:bg-primary transition-all"></div>
+<div class="w-4 bg-secondary/20 rounded-t-sm h-[15%] group-hover:bg-secondary transition-all"></div>
+</div>
+<span class="text-[10px] text-slate-400 font-bold">SUN</span>
+</div>
+</div>
+</div>
+<!-- Fulfillment Insights (1/3 width) -->
+<div class="bg-primary text-on-primary p-10 rounded-xl flex flex-col justify-between">
+<div>
+<span class="material-symbols-outlined text-4xl mb-6 text-secondary-container">bolt</span>
+<h3 class="text-2xl font-bold mb-4">Fulfillment Efficiency</h3>
+<p class="text-primary-fixed-dim text-sm leading-relaxed mb-8">Your average processing time has decreased by 14 minutes per order this week, leading to a direct uplift in customer satisfaction scores.</p>
+</div>
+<div class="space-y-6">
+<div class="flex items-center justify-between">
+<span class="text-xs font-bold uppercase tracking-wider opacity-60">Success Rate</span>
+<span class="text-xl font-bold">98.4%</span>
+</div>
+<div class="w-full bg-primary-container h-1 rounded-full">
+<div class="bg-secondary h-full w-[98.4%] rounded-full shadow-[0_0_10px_rgba(0,109,61,0.5)]"></div>
+</div>
+<div class="flex items-center justify-between">
+<span class="text-xs font-bold uppercase tracking-wider opacity-60">Avg. Delay</span>
+<span class="text-xl font-bold">4.2m</span>
+</div>
+<div class="w-full bg-primary-container h-1 rounded-full">
+<div class="bg-tertiary-fixed h-full w-[15%] rounded-full"></div>
+</div>
+</div>
+</div>
+</section>
+<!-- Bottom Section: Customer Profiles & History -->
+<section class="grid grid-cols-1 md:grid-cols-2 gap-8">
+<!-- Recent High-Value Repeat Orders -->
+<div class="bg-surface-container-low p-8 rounded-xl border border-outline-variant/10">
+<div class="flex items-center justify-between mb-8">
+<h3 class="text-xl font-extrabold text-primary">Repeat Activity</h3>
+<a class="text-xs font-bold text-secondary uppercase tracking-widest hover:underline" href="#">View All</a>
+</div>
+<div class="space-y-4">
+<div class="flex items-center justify-between p-4 bg-surface-container-lowest rounded-lg">
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 rounded-full bg-surface-variant overflow-hidden">
+<img alt="User Profile" class="w-full h-full object-cover" data-alt="portrait of a confident woman smiling in an urban setting with golden light" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDChCOl1YqlT2Kqr_f1E6bRaoa7vykwxLwFUldqSCZoJCCf3iWK2fdCLBKuTpREBDm8_1bqOBmDQOovBli1oi9zxvQW-n41YRAlSKG3eFigCgxkpJKI1PVfF5PVKNJH3vHqwVS9UztFksE85_Hs0mZ91j_zhtcGEJH0UtUUjsYoiz4HLGOY0YGlg023rmT_he8dB692X6OKX5stID5FTrONxZAs1rKGHHScJLyc7gHkT5lpL5-mOhDSF2SIOhxvllfW1WW6sEv_vZM"/>
+</div>
+<div>
+<p class="text-sm font-bold text-primary">Alexandra Chen</p>
+<p class="text-[10px] text-on-surface-variant">12th Order • Platinum Member</p>
+</div>
+</div>
+<div class="text-right">
+<p class="text-sm font-bold text-secondary">$1,240.00</p>
+<p class="text-[10px] text-on-surface-variant">Confirmed</p>
+</div>
+</div>
+<div class="flex items-center justify-between p-4 bg-surface-container-lowest rounded-lg">
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 rounded-full bg-surface-variant overflow-hidden">
+<img alt="User Profile" class="w-full h-full object-cover" data-alt="portrait of a man with spectacles in a thoughtful pose against a neutral studio background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA-I4ZMNmveZDWMVtg8pSQMrUEXMhaNTcpcjUPHQ681_JklJtzfpjGuNslp3G2BCZnRiB-NqM2_jUn_AB9JauTzMfRGabApSNl_sw5pWWUjLzm9OLrbhGrcYRakQ01XEbl4SLUJifQn1RlJV1IxHC87YVE7hiOVkJxR6BVsgeI4EOO1tTnE9uj2r8RAUSW4-H-ocoUs_I4MwYhPToEnd3IMMLPc9ovkDcCUxy_S1jPRZzQl7SSNGTWimwxHx1AxtxMuVFYulIgnSYs"/>
+</div>
+<div>
+<p class="text-sm font-bold text-primary">Marcus Holloway</p>
+<p class="text-[10px] text-on-surface-variant">5th Order • Gold Member</p>
+</div>
+</div>
+<div class="text-right">
+<p class="text-sm font-bold text-secondary">$890.50</p>
+<p class="text-[10px] text-on-surface-variant">Processing</p>
+</div>
+</div>
+<div class="flex items-center justify-between p-4 bg-surface-container-lowest rounded-lg">
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 rounded-full bg-surface-variant overflow-hidden">
+<img alt="User Profile" class="w-full h-full object-cover" data-alt="young professional woman in a creative workspace with soft natural light" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCSsom1iH9LF6eSEq3WjFXymjXmZr_fD-6fz82dNOqcHmSVDNBDKXBU5_6t6-OcFw0J5eTOuFLJ4VUISeeeP9MAIkBw4QQbTukcfMLo966sI9TlVvGjwx-ir1mY5XnJ6Zh3YVUetJt9FKCy0YP9clfpnX91fA7b5KcW_EgZZTU6z71tVGNqEe3YDwsRaJbmw0JAZn32gyMoo07VOVoGhdavZeE_JngqfU6zkIxbItpvGiNguAKiynKWPXDWjA5pmuTdbLmDDtgesio"/>
+</div>
+<div>
+<p class="text-sm font-bold text-primary">Elena Rodriguez</p>
+<p class="text-[10px] text-on-surface-variant">8th Order • Platinum Member</p>
+</div>
+</div>
+<div class="text-right">
+<p class="text-sm font-bold text-secondary">$2,100.00</p>
+<p class="text-[10px] text-on-surface-variant">Shipped</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Strategic Summary -->
+<div class="bg-surface-container-lowest p-8 rounded-xl border border-outline-variant/10 flex flex-col">
+<h3 class="text-xl font-extrabold text-primary mb-6">Strategic Intelligence</h3>
+<div class="flex-1 space-y-8">
+<div class="flex gap-4">
+<div class="w-12 h-12 rounded-xl bg-secondary-container flex items-center justify-center flex-shrink-0">
+<span class="material-symbols-outlined text-on-secondary-container" style="font-variation-settings: 'FILL' 1;">trending_up</span>
+</div>
+<div>
+<h4 class="font-bold text-primary mb-1">Customer Retention Surplus</h4>
+<p class="text-xs text-on-surface-variant leading-relaxed">Your 65% repeat customer rate is 15% above the industry average for SME boutique ateliers. This indicates strong brand equity and predictable future cash flow.</p>
+</div>
+</div>
+<div class="flex gap-4">
+<div class="w-12 h-12 rounded-xl bg-tertiary-fixed flex items-center justify-center flex-shrink-0">
+<span class="material-symbols-outlined text-on-tertiary-container" style="font-variation-settings: 'FILL' 1;">priority_high</span>
+</div>
+<div>
+<h4 class="font-bold text-primary mb-1">Scale Threshold Warning</h4>
+<p class="text-xs text-on-surface-variant leading-relaxed">Orders exceeded 500+ this month. Analysis suggests current logistics bandwidth will reach saturation at 620 orders. Consider early-stage fulfillment expansion.</p>
+</div>
+</div>
+</div>
+<div class="pt-8 mt-8 border-t border-outline-variant/10">
+<p class="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-4">Operational Status</p>
+<div class="flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-secondary animate-pulse"></span>
+<span class="text-xs font-bold text-secondary">All Systems Healthy • Optimal Efficiency</span>
+</div>
+</div>
+</div>
+</section>
+</div>
+</main>
+</body></html>
