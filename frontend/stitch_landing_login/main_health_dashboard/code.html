@@ -3,11 +3,10 @@
 <html class="light" lang="en"><head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>Financial Atelier | Executive Insight</title>
+<title>FinSight AI | Business Health Dashboard</title>
 <!-- Google Fonts: Manrope & Inter -->
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Manrope:wght@700;800&amp;display=swap" rel="stylesheet"/>
 <!-- Material Symbols -->
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
 <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
 <script id="tailwind-config">
@@ -85,12 +84,26 @@
         }
         .text-display-lg { font-family: 'Manrope'; font-size: 3.5rem; line-height: 1; font-weight: 800; letter-spacing: -0.02em; }
         .text-headline-sm { font-family: 'Manrope'; font-size: 1.5rem; line-height: 2rem; font-weight: 700; }
+
+        /* Loading pulse animation */
+        @keyframes dash-pulse { 0%,100%{opacity:.4} 50%{opacity:1} }
+        .dash-loading { animation: dash-pulse 1.4s ease-in-out infinite; }
     </style>
 </head>
 <body class="bg-background font-body text-on-background selection:bg-secondary/30">
 <script src="../js/config.js"></script>
 <script src="../js/auth.js"></script>
 <script src="../js/auth-guard.js"></script>
+<script src="../js/inr-format.js"></script>
+
+<!-- Loading overlay (hidden once data arrives) -->
+<div id="dash-loading-overlay" class="fixed inset-0 z-[200] bg-background/70 backdrop-blur-sm flex items-center justify-center pointer-events-none">
+  <div class="flex flex-col items-center gap-3">
+    <div class="w-10 h-10 border-4 border-secondary border-t-transparent rounded-full animate-spin"></div>
+    <p class="text-sm font-semibold text-on-surface-variant">Loading your dashboard…</p>
+  </div>
+</div>
+
 <!-- SideNavBar Shell -->
 <nav class="fixed left-0 top-0 h-full flex flex-col h-screen w-64 border-r-0 bg-slate-50 dark:bg-slate-900 font-manrope antialiased z-50">
 <div class="px-6 py-8">
@@ -167,11 +180,11 @@
 </div>
 <div class="flex items-center gap-3 pl-6 border-l border-slate-200">
 <div class="text-right">
-<p class="text-xs font-bold text-blue-950">Elena Richards</p>
+<p class="text-xs font-bold text-blue-950" id="dash-username">Business Owner</p>
 <p class="text-[10px] text-slate-500">Managing Director</p>
 </div>
-<div class="w-10 h-10 rounded-full bg-surface-container-high overflow-hidden cursor-pointer" onclick="FinSightAuth.logout().then(function(){ location.href='../landing_login/code.html'; });">
-<img alt="Elena Richards" class="w-full h-full object-cover" data-alt="professional portrait of a confident middle-aged businesswoman with a friendly expression in a modern office setting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDFCksU5san04YZDJAvHHWEnIQz4AZigTACiNSoCZ8Wm3SJHgoeye6nLC_s5XdsiRl09XS3INsuVNSstdteh24LMhmn9U4zX9iXpGV2dCgLMCJIvJhDEMLPGwCtwM3bERhVYepoe6mODGzEtW5oPVFvtPRjXE2qG7GX9mxryvX_nw39QiW70zDBHaV-KqFABknCq_GvrCa-9Njxhxpfi2157vz6dvkQ7wV4fEKpYpcA0uiYTSKEJWyiLWDzkIa5z1L4j7zGj-CnUZM"/>
+<div class="w-10 h-10 rounded-full bg-surface-container-high overflow-hidden cursor-pointer flex items-center justify-center text-primary font-bold text-sm" onclick="FinSightAuth.logout().then(function(){ location.href='../landing_login/code.html'; });">
+  BO
 </div>
 <span class="material-symbols-outlined cursor-pointer hover:text-blue-800 transition-all ml-2" onclick="FinSightAuth.logout().then(function(){ location.href='../landing_login/code.html'; });" title="Logout">logout</span>
 </div>
@@ -182,16 +195,16 @@
 <!-- Welcome & Alert Banner -->
 <div class="flex flex-col md:flex-row justify-between items-end mb-12">
 <div>
-<p class="label-sm text-secondary font-semibold tracking-widest uppercase mb-2">Morning, Elena</p>
-<h1 class="text-headline-sm text-primary mb-1">Your Business Health Portfolio</h1>
-<p class="text-on-surface-variant max-w-lg">Everything is tracking within established parameters. We've detected two minor opportunities for tax optimization this month.</p>
+<p class="label-sm text-secondary font-semibold tracking-widest uppercase mb-2">Business Health Portfolio</p>
+<h1 class="text-headline-sm text-primary mb-1">Your Live Financial Dashboard</h1>
+<p class="text-on-surface-variant max-w-lg" id="dash-header-summary">Loading your business health data…</p>
 </div>
 <div class="flex gap-3 mt-6 md:mt-0">
 <div class="bg-tertiary-fixed text-on-tertiary-fixed px-4 py-3 rounded-lg flex items-center gap-3 shadow-sm">
 <span class="material-symbols-outlined text-on-tertiary-container" data-icon="lightbulb">lightbulb</span>
 <div class="text-xs">
-<p class="font-bold">Optimization Alert</p>
-<p class="opacity-80">R&amp;D Tax Credit Eligibility</p>
+<p class="font-bold" id="dash-alert-label">Optimization Alert</p>
+<p class="opacity-80" id="dash-alert-sub">Analysing your data…</p>
 </div>
 </div>
 </div>
@@ -205,20 +218,23 @@
 <div>
 <h3 class="font-headline font-bold text-lg opacity-80 mb-8">Business Health Score</h3>
 <div class="flex items-baseline gap-2">
-<span class="text-display-lg">82</span>
+<span class="text-display-lg" id="dash-health-score">—</span>
 <span class="text-2xl font-bold opacity-40">/100</span>
 </div>
 <div class="mt-6 flex items-center gap-2">
-<span class="px-3 py-1 bg-secondary-container text-on-secondary-container rounded text-xs font-bold uppercase tracking-wider">Growth Phase</span>
-<span class="text-secondary-fixed text-sm font-medium">+4pts from last month</span>
+<span class="px-3 py-1 bg-secondary-container text-on-secondary-container rounded text-xs font-bold uppercase tracking-wider" id="dash-health-badge-label">Loading…</span>
+<span class="text-secondary-fixed text-sm font-medium" id="dash-health-growth-label">Calculating…</span>
 </div>
 </div>
 <div class="text-right">
 <div class="w-32 h-32 relative">
-<!-- SVG Circle Chart -->
+<!-- SVG Circle Chart — stroke-dashoffset is set by JS -->
 <svg class="w-full h-full transform -rotate-90" viewbox="0 0 100 100">
 <circle class="text-white/10" cx="50" cy="50" fill="transparent" r="45" stroke="currentColor" stroke-width="8"></circle>
-<circle cx="50" cy="50" fill="transparent" r="45" stroke="#97f3b5" stroke-dasharray="282.7" stroke-dashoffset="50.8" stroke-linecap="round" stroke-width="8"></circle>
+<circle id="dash-health-ring" cx="50" cy="50" fill="transparent" r="45" stroke="#97f3b5"
+        stroke-dasharray="282.74" stroke-dashoffset="282.74"
+        stroke-linecap="round" stroke-width="8"
+        style="transition: stroke-dashoffset 1s ease-in-out;"></circle>
 </svg>
 <div class="absolute inset-0 flex items-center justify-center">
 <span class="material-symbols-outlined text-4xl text-secondary-fixed" data-icon="verified_user" data-weight="fill">verified_user</span>
@@ -229,44 +245,43 @@
 <div class="relative z-10 mt-12 grid grid-cols-3 gap-6 pt-8 border-t border-white/10">
 <div>
 <p class="text-xs opacity-60 mb-1">Liquidity</p>
-<p class="text-lg font-bold">Strong</p>
+<p class="text-lg font-bold" id="dash-health-liquidity">—</p>
 </div>
 <div>
 <p class="text-xs opacity-60 mb-1">Efficiency</p>
-<p class="text-lg font-bold">Optimal</p>
+<p class="text-lg font-bold" id="dash-health-efficiency">—</p>
 </div>
 <div>
 <p class="text-xs opacity-60 mb-1">Risk Factor</p>
-<p class="text-lg font-bold">Low</p>
+<p class="text-lg font-bold" id="dash-health-risk">—</p>
 </div>
 </div>
 </div>
-<!-- Revenue vs Expense Comparison -->
+<!-- Operating Margin Mini Bar Chart -->
 <div class="col-span-12 lg:col-span-5 bg-surface-container-lowest rounded-xl p-8 border border-outline-variant/10 shadow-sm flex flex-col">
 <div class="flex justify-between items-start mb-8">
 <h3 class="text-headline-sm text-primary">Operating Margin</h3>
 <span class="material-symbols-outlined text-slate-400" data-icon="more_horiz">more_horiz</span>
 </div>
 <div class="flex-grow flex items-end gap-2 h-48">
-<!-- Custom Bar Chart Mockup -->
+<!-- Revenue bar -->
 <div class="flex-1 flex flex-col items-center gap-2">
-<div class="w-full bg-surface-container-high rounded-t-lg relative group h-full">
-<div class="absolute bottom-0 left-0 right-0 bg-primary/20 h-3/4 rounded-t-lg"></div>
-<div class="absolute bottom-0 left-0 right-0 bg-primary h-1/2 rounded-t-lg"></div>
+<div class="w-full bg-surface-container-high rounded-t-lg relative group h-full flex flex-col justify-end">
+<div id="dash-bar-revenue" class="w-full bg-primary rounded-t-lg transition-all duration-700" style="height:4%"></div>
 </div>
 <span class="text-[10px] font-bold text-slate-400 uppercase">Revenue</span>
 </div>
+<!-- Profit bar -->
 <div class="flex-1 flex flex-col items-center gap-2">
-<div class="w-full bg-surface-container-high rounded-t-lg relative group h-full">
-<div class="absolute bottom-0 left-0 right-0 bg-secondary/20 h-2/3 rounded-t-lg"></div>
-<div class="absolute bottom-0 left-0 right-0 bg-secondary h-[45%] rounded-t-lg"></div>
+<div class="w-full bg-surface-container-high rounded-t-lg relative group h-full flex flex-col justify-end">
+<div id="dash-bar-profit" class="w-full bg-secondary rounded-t-lg transition-all duration-700" style="height:4%"></div>
 </div>
 <span class="text-[10px] font-bold text-slate-400 uppercase">Profit</span>
 </div>
+<!-- Expense bar -->
 <div class="flex-1 flex flex-col items-center gap-2">
-<div class="w-full bg-surface-container-high rounded-t-lg relative group h-full">
-<div class="absolute bottom-0 left-0 right-0 bg-error/20 h-[55%] rounded-t-lg"></div>
-<div class="absolute bottom-0 left-0 right-0 bg-error/40 h-[40%] rounded-t-lg"></div>
+<div class="w-full bg-surface-container-high rounded-t-lg relative group h-full flex flex-col justify-end">
+<div id="dash-bar-expense" class="w-full bg-error/70 rounded-t-lg transition-all duration-700" style="height:4%"></div>
 </div>
 <span class="text-[10px] font-bold text-slate-400 uppercase">Expense</span>
 </div>
@@ -276,7 +291,7 @@
 <div class="w-2 h-2 rounded-full bg-secondary"></div>
 <span class="text-xs font-medium text-on-surface-variant">Margin Efficiency</span>
 </div>
-<span class="text-sm font-bold text-secondary">29.1%</span>
+<span class="text-sm font-bold text-secondary" id="dash-margin-efficiency">—</span>
 </div>
 </div>
 </div>
@@ -288,14 +303,12 @@
 <div class="p-2 bg-slate-100 rounded-lg text-primary">
 <span class="material-symbols-outlined" data-icon="payments">payments</span>
 </div>
-<span class="text-[10px] font-bold text-secondary flex items-center gap-1 bg-secondary-container/20 px-2 py-1 rounded">
-<span class="material-symbols-outlined text-[14px]" data-icon="trending_up">trending_up</span> 12%
-                    </span>
+<span id="dash-kpi-revenue-badge"></span>
 </div>
 <p class="text-xs font-medium text-on-surface-variant mb-1">Total Revenue</p>
-<p class="text-2xl font-bold font-headline">$1,245,000</p>
+<p class="text-2xl font-bold font-headline" id="dash-kpi-revenue">—</p>
 <div class="mt-4 h-1 w-full bg-surface-container rounded-full overflow-hidden">
-<div class="h-full bg-primary w-4/5"></div>
+<div class="h-full bg-primary transition-all duration-700" id="dash-bar-kpi-revenue" style="width:0%"></div>
 </div>
 </div>
 <!-- Expenses Card -->
@@ -304,14 +317,12 @@
 <div class="p-2 bg-slate-100 rounded-lg text-primary">
 <span class="material-symbols-outlined" data-icon="shopping_bag">shopping_bag</span>
 </div>
-<span class="text-[10px] font-bold text-error flex items-center gap-1 bg-error-container/20 px-2 py-1 rounded">
-<span class="material-symbols-outlined text-[14px]" data-icon="trending_up">trending_up</span> 3%
-                    </span>
+<span id="dash-kpi-expense-badge"></span>
 </div>
 <p class="text-xs font-medium text-on-surface-variant mb-1">Total Expenses</p>
-<p class="text-2xl font-bold font-headline">$850,200</p>
+<p class="text-2xl font-bold font-headline" id="dash-kpi-expense">—</p>
 <div class="mt-4 h-1 w-full bg-surface-container rounded-full overflow-hidden">
-<div class="h-full bg-error w-3/5"></div>
+<div class="h-full bg-error transition-all duration-700" id="dash-bar-kpi-expense" style="width:0%"></div>
 </div>
 </div>
 <!-- Net Profit Card -->
@@ -320,14 +331,12 @@
 <div class="p-2 bg-slate-100 rounded-lg text-primary">
 <span class="material-symbols-outlined" data-icon="account_balance">account_balance</span>
 </div>
-<span class="text-[10px] font-bold text-secondary flex items-center gap-1 bg-secondary-container/20 px-2 py-1 rounded">
-<span class="material-symbols-outlined text-[14px]" data-icon="trending_up">trending_up</span> 8%
-                    </span>
+<span id="dash-kpi-netprofit-badge"></span>
 </div>
 <p class="text-xs font-medium text-on-surface-variant mb-1">Net Profit</p>
-<p class="text-2xl font-bold font-headline">$350,800</p>
+<p class="text-2xl font-bold font-headline" id="dash-kpi-netprofit">—</p>
 <div class="mt-4 h-1 w-full bg-surface-container rounded-full overflow-hidden">
-<div class="h-full bg-secondary w-1/2"></div>
+<div class="h-full bg-secondary transition-all duration-700" id="dash-bar-kpi-netprofit" style="width:0%"></div>
 </div>
 </div>
 <!-- Cash Position Card -->
@@ -336,14 +345,12 @@
 <div class="p-2 bg-slate-100 rounded-lg text-primary">
 <span class="material-symbols-outlined" data-icon="account_balance_wallet">account_balance_wallet</span>
 </div>
-<span class="text-[10px] font-bold text-slate-400 flex items-center gap-1 bg-slate-100 px-2 py-1 rounded">
-<span class="material-symbols-outlined text-[14px]" data-icon="horizontal_rule">horizontal_rule</span> 0%
-                    </span>
+<span id="dash-kpi-cashflow-badge"></span>
 </div>
-<p class="text-xs font-medium text-on-surface-variant mb-1">Cash Position</p>
-<p class="text-2xl font-bold font-headline">$125,000</p>
+<p class="text-xs font-medium text-on-surface-variant mb-1">Net Cash Flow</p>
+<p class="text-2xl font-bold font-headline" id="dash-kpi-cashflow">—</p>
 <div class="mt-4 h-1 w-full bg-surface-container rounded-full overflow-hidden">
-<div class="h-full bg-blue-500 w-1/4"></div>
+<div class="h-full bg-blue-500 transition-all duration-700" id="dash-bar-kpi-cashflow" style="width:0%"></div>
 </div>
 </div>
 </div>
@@ -353,82 +360,57 @@
 <div class="col-span-12 lg:col-span-8 space-y-4">
 <div class="flex justify-between items-center mb-6">
 <h3 class="text-headline-sm text-primary">Strategic Recommendations</h3>
-<button class="text-sm font-bold text-primary flex items-center gap-2 hover:opacity-70 transition-opacity">
-                        View All <span class="material-symbols-outlined text-sm">arrow_forward</span>
-</button>
+<a class="text-sm font-bold text-primary flex items-center gap-2 hover:opacity-70 transition-opacity" href="../financial_atelier_executive_dashboard/code.html">
+  View Full Report <span class="material-symbols-outlined text-sm">arrow_forward</span>
+</a>
 </div>
-<div class="bg-surface-container-low p-5 rounded-xl flex items-center gap-6 group hover:bg-white hover:shadow-xl hover:shadow-primary/5 transition-all duration-300 border border-transparent hover:border-outline-variant/20">
-<div class="w-12 h-12 bg-white rounded-lg flex items-center justify-center text-secondary shadow-sm">
-<span class="material-symbols-outlined" data-icon="savings">savings</span>
-</div>
-<div class="flex-grow">
-<h4 class="font-bold text-primary">Tax Efficiency Opportunity</h4>
-<p class="text-sm text-on-surface-variant">Your Q3 vendor spending qualifies for an additional 4% deduction under the new SME framework.</p>
-</div>
-<div class="text-right">
-<p class="text-xs font-bold text-secondary uppercase tracking-wider mb-1">Potential Save</p>
-<p class="text-lg font-extrabold text-primary">$12,400</p>
-</div>
-<span class="material-symbols-outlined text-slate-300 group-hover:text-primary transition-colors">chevron_right</span>
-</div>
-<div class="bg-surface-container-low p-5 rounded-xl flex items-center gap-6 group hover:bg-white hover:shadow-xl hover:shadow-primary/5 transition-all duration-300 border border-transparent hover:border-outline-variant/20">
-<div class="w-12 h-12 bg-white rounded-lg flex items-center justify-center text-blue-500 shadow-sm">
-<span class="material-symbols-outlined" data-icon="speed">speed</span>
-</div>
-<div class="flex-grow">
-<h4 class="font-bold text-primary">Cash Flow Acceleration</h4>
-<p class="text-sm text-on-surface-variant">Late payment trends from 3 major clients are affecting liquidity. Consider automated reminders.</p>
-</div>
-<div class="text-right">
-<p class="text-xs font-bold text-blue-500 uppercase tracking-wider mb-1">Impact Score</p>
-<p class="text-lg font-extrabold text-primary">High</p>
-</div>
-<span class="material-symbols-outlined text-slate-300 group-hover:text-primary transition-colors">chevron_right</span>
-</div>
-<div class="bg-surface-container-low p-5 rounded-xl flex items-center gap-6 group hover:bg-white hover:shadow-xl hover:shadow-primary/5 transition-all duration-300 border border-transparent hover:border-outline-variant/20">
-<div class="w-12 h-12 bg-white rounded-lg flex items-center justify-center text-tertiary-fixed-dim shadow-sm">
-<span class="material-symbols-outlined" data-icon="contract">contract</span>
-</div>
-<div class="flex-grow">
-<h4 class="font-bold text-primary">Subscription Audit</h4>
-<p class="text-sm text-on-surface-variant">We found 8 redundant SaaS subscriptions across your marketing and ops departments.</p>
-</div>
-<div class="text-right">
-<p class="text-xs font-bold text-tertiary-fixed-dim uppercase tracking-wider mb-1">Monthly Waste</p>
-<p class="text-lg font-extrabold text-primary">$840</p>
-</div>
-<span class="material-symbols-outlined text-slate-300 group-hover:text-primary transition-colors">chevron_right</span>
+<!-- Recommendations injected by dashboard-page.js -->
+<div id="dash-recommendations-list" class="space-y-4">
+  <div class="bg-surface-container-low p-5 rounded-xl flex items-center gap-6 dash-loading">
+    <div class="w-12 h-12 bg-surface-container-high rounded-lg shrink-0"></div>
+    <div class="flex-grow space-y-2">
+      <div class="h-3 bg-surface-container-high rounded w-3/4"></div>
+      <div class="h-2 bg-surface-container-high rounded w-full"></div>
+    </div>
+  </div>
+  <div class="bg-surface-container-low p-5 rounded-xl flex items-center gap-6 dash-loading" style="animation-delay:0.2s">
+    <div class="w-12 h-12 bg-surface-container-high rounded-lg shrink-0"></div>
+    <div class="flex-grow space-y-2">
+      <div class="h-3 bg-surface-container-high rounded w-1/2"></div>
+      <div class="h-2 bg-surface-container-high rounded w-full"></div>
+    </div>
+  </div>
 </div>
 </div>
-<!-- Side Metric Column (Asymmetric Layout) -->
+<!-- Side Metric Column (Financial Maturity) -->
 <div class="col-span-12 lg:col-span-4 space-y-8">
 <div class="bg-surface-container-highest rounded-xl p-8 relative overflow-hidden h-full flex flex-col justify-between">
 <div class="relative z-10">
 <h3 class="text-headline-sm text-primary mb-6">Financial Maturity</h3>
-<p class="text-sm text-on-surface-variant mb-8">Your business is currently in the <span class="text-primary font-bold">Top 15%</span> of peer performers in your sector.</p>
+<p class="text-sm text-on-surface-variant mb-8" id="dash-maturity-rank">Loading peer benchmarks…</p>
 <div class="space-y-6">
 <div class="flex flex-col gap-2">
 <div class="flex justify-between text-xs font-bold text-primary">
-<span>Benchmark Comparison</span>
-<span>Superior</span>
+<span>Financial Health</span>
+<span id="dash-benchmark-label">—</span>
 </div>
 <div class="w-full bg-white/40 h-2 rounded-full">
-<div class="bg-secondary w-[85%] h-2 rounded-full"></div>
+<div id="dash-benchmark-bar" class="bg-secondary h-2 rounded-full transition-all duration-700" style="width:0%"></div>
 </div>
 </div>
 <div class="flex flex-col gap-2">
 <div class="flex justify-between text-xs font-bold text-primary">
 <span>Capital Efficiency</span>
-<span>Healthy</span>
+<span id="dash-capital-label">—</span>
 </div>
 <div class="w-full bg-white/40 h-2 rounded-full">
-<div class="bg-primary w-[70%] h-2 rounded-full"></div>
+<div id="dash-capital-bar" class="bg-primary h-2 rounded-full transition-all duration-700" style="width:0%"></div>
 </div>
 </div>
 </div>
 </div>
 <div class="relative z-10 mt-12 bg-white/30 backdrop-blur-sm p-4 rounded-lg border border-white/50">
-<p class="text-xs font-bold text-primary italic">"Focus on accounts receivable optimization this week to reach an 85+ health score."</p>
+<p class="text-xs font-bold text-primary italic" id="dash-ai-quote">"Your financial condition will be shown here once data is loaded."</p>
 <p class="text-[10px] text-on-surface-variant mt-2 text-right">— AI Financial Advisor</p>
 </div>
 <!-- Abstract Background Decorative Element -->
@@ -437,6 +419,6 @@
 </div>
 </div>
 </main>
-<!-- Contextual FAB (Hidden by default unless screen purpose aligns - per rules) -->
-<!-- Suppressed on Dashboard to prioritize editorial flow -->
+
+<script src="../js/dashboard-page.js"></script>
 </body></html>
